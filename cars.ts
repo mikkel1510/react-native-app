@@ -15,8 +15,8 @@ export const cars: Car[] = [
     make: "Tesla",
     model: "Model 3",
     year: 2023,
-    price: 49999,
-    image: require("./assets/cars/bmw.png"),
+    price: 25,
+    image: require("./assets/cars/tesla.png"),
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ export const cars: Car[] = [
     make: "BMW",
     model: "3 Series",
     year: 2021,
-    price: 41999,
+    price: 22,
     image: require("./assets/cars/bmw.png"),
   },
   {
@@ -33,7 +33,7 @@ export const cars: Car[] = [
     make: "Toyota",
     model: "Corolla",
     year: 2021,
-    price: 19999,
+    price: 15,
     image: require("./assets/cars/toyota.png"),
   },
 ];
