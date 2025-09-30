@@ -1,11 +1,25 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
 import { cars } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
+import { useState } from "react";
+import Modal from "react-native-modal";
 
 
 const CarDetailsScreen: React.FC = () => {
+
+    const [isPopUpVisible, setPopUpVisible] = useState(false)
+    const togglePopUp = () => {
+        setPopUpVisible(!isPopUpVisible);
+    }
+
+    const [isRented, setRented] = useState(false)
     
+    const toggleRented = () => {
+        setRented(!isRented);
+        setPopUpVisible(!isPopUpVisible)
+    }
+
     const route = useRoute();
     const { carId } = route.params as {carId: number}
     const car = cars.find((c) => c.id === carId);
@@ -21,15 +35,52 @@ const CarDetailsScreen: React.FC = () => {
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                <Pressable style={styles.button}>
+                <Pressable style={styles.button} onPress={togglePopUp}>
                     <Text style={styles.buttonText}>Rent</Text>
                 </Pressable>
+                <Text>Rented: {isRented ? "true" : "false"}</Text>
             </View>
             <View style={styles.box}>
                 <Text>Showing more details for {car.name}</Text>
+                <Text>Model year: {car.specs.modelYear}</Text>
+                <Text>First registration: {car.specs.firstRegistration}</Text>
                 <Text>Fuel type: {car.specs.fuelType}</Text>
                 <Text>Acceleration: {car.specs.acceleration}</Text>
             </View>
+
+            <Modal isVisible={isPopUpVisible} backdropColor="grey">
+                <View style={styles.popup}>
+                        <ImageBackground source={require("./assets/Calendar.png")} style={styles.calendar}>
+                            <View style={{ alignItems: 'center'}}>
+                                <Text style={styles.header}>{car.name}</Text>
+                            </View>
+                            <View style={{ paddingTop: 50 }}>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Period</Text>
+                                    <Text>Enddate</Text>
+                                </View>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Time</Text>
+                                    <Text>END</Text>
+                                </View>    
+                            </View>
+                        </ImageBackground>
+                    
+                        <View style={styles.popupRow}>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
+                                <Text style={styles.buttonText}>
+                                    Confirm
+                                </Text>
+                            </Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
+                                <Text style={styles.buttonText}>
+                                    Cancel
+                                </Text>
+                            </Pressable>
+                        </View>
+                </View>
+            </Modal>
+
         </View>
     )
 }
@@ -63,5 +114,26 @@ const styles = StyleSheet.create({
         paddingVertical: Spacing.small,
         paddingHorizontal: Spacing.large,
         borderRadius: Border.round
+    },
+    popup: {
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        height: 600,
+        borderRadius: Border.round,
+        overflow: 'visible'
+    },
+    popupRow: {
+        flexDirection: 'row', 
+        gap: Spacing.small, 
+        justifyContent: 'center',
+        margin: Spacing.medium
+    },
+    calendar: {
+        height: 500, 
+        resizeMode: "contain",
+        justifyContent: 'flex-start', 
+        padding: Spacing.large,
+        paddingTop: 130,
+        top: -70,
     }
 })
