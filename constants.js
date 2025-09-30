@@ -16,3 +16,7 @@ export const Spacing = {
   medium: 16, 
   large: 24,
 }
+
+export const Border = {
+  round: 20
+}
