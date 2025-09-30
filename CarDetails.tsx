@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
-import { cars } from "./cars";
+import { cars, CarSpecs, labels } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
 import { useState } from "react";
 import Modal from "react-native-modal";
@@ -32,20 +32,28 @@ const CarDetailsScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                <Pressable style={styles.button} onPress={togglePopUp}>
+                <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
                     <Text style={styles.buttonText}>Rent</Text>
+                    <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
                 </Pressable>
                 <Text>Rented: {isRented ? "true" : "false"}</Text>
             </View>
-            <View style={styles.box}>
-                <Text>Showing more details for {car.name}</Text>
-                <Text>Model year: {car.specs.modelYear}</Text>
-                <Text>First registration: {car.specs.firstRegistration}</Text>
-                <Text>Fuel type: {car.specs.fuelType}</Text>
-                <Text>Acceleration: {car.specs.acceleration}</Text>
+
+            <View style={[styles.box, { alignItems: 'stretch' }]}>
+                {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
+                    <View style={styles.infoRow} key={key}>
+                        <Text>
+                            {labels[key]}:
+                        </Text>
+                        <Text>
+                            {car.specs[key]}
+                        </Text>
+                    </View>
+                ))}
             </View>
 
             <Modal isVisible={isPopUpVisible} backdropColor="grey">
@@ -107,13 +115,16 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     buttonText: {
-        fontSize: 20
+        fontSize: 20,
+        fontWeight: 'bold'
     },
     button: {
         backgroundColor: Colors.accent,
         paddingVertical: Spacing.small,
         paddingHorizontal: Spacing.large,
-        borderRadius: Border.round
+        borderRadius: Border.round,
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     popup: {
         justifyContent: 'space-between',
@@ -135,5 +146,9 @@ const styles = StyleSheet.create({
         padding: Spacing.large,
         paddingTop: 130,
         top: -70,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })

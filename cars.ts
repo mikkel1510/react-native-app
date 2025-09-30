@@ -3,7 +3,6 @@ export interface Car {
     name: string;
     make: string;
     model: string;
-    year: number;
     price: number;
     distance: number;
     image: any;
@@ -37,7 +36,6 @@ export const cars: Car[] = [
     name: "Tesla Model 3",
     make: "Tesla",
     model: "Model 3",
-    year: 2023,
     price: 25,
     distance: 0.5,
     image: require("./assets/cars/tesla.png"),
@@ -67,7 +65,6 @@ export const cars: Car[] = [
     name: "BMW 330i",
     make: "BMW",
     model: "3 Series",
-    year: 2021,
     price: 22,
     distance: 0.8,
     image: require("./assets/cars/bmw.png"),
@@ -97,7 +94,6 @@ export const cars: Car[] = [
     name: "Toyota Corolla",
     make: "Toyota",
     model: "Corolla",
-    year: 2021,
     price: 15,
     distance: 1.5,
     image: require("./assets/cars/toyota.png"),
@@ -123,3 +119,24 @@ export const cars: Car[] = [
     },
   },
 ];
+
+export const labels: Record<keyof CarSpecs, string> = {
+  modelYear: "Model year",
+  firstRegistration: "First registration",
+  mileage: "Mileage",
+  fuelType: "Fuel type",
+  fuelConsumption: "Fuel consumption",
+  range: "Range",
+  batteryCapacity: "Battery capacity",
+  energyConsumption: "Energy consumption",
+  co2Emissions: "CO₂ emissions",
+  euroStandard: "Euro standard",
+  annualRoadTax: "Annual road tax",
+  powerOutput: "Power output",
+  acceleration: "Acceleration",
+  topSpeed: "Top speed",
+  transmission: "Transmission",
+  gears: "Number of gears",
+  towingCapacity: "Towing capacity",
+  color: "Color",
+};
