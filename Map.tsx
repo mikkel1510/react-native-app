@@ -7,9 +7,6 @@ const MapScreen: React.FC = () => {
     return (
         <View>
             <Text>This is the Map page</Text>
-            <Pressable onPress={() => navigation.navigate("CarDetails")}>
-                <Text>Car details</Text>
-            </Pressable>
         </View>
     )
 }

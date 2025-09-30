@@ -5,6 +5,7 @@ export interface Car {
     model: string;
     year: number;
     price: number;
+    distance: number;
     image: any;
     specs: CarSpecs
 }
@@ -38,6 +39,7 @@ export const cars: Car[] = [
     model: "Model 3",
     year: 2023,
     price: 25,
+    distance: 0.5,
     image: require("./assets/cars/tesla.png"),
     specs: {
       modelYear: 2024,
@@ -67,6 +69,7 @@ export const cars: Car[] = [
     model: "3 Series",
     year: 2021,
     price: 22,
+    distance: 0.8,
     image: require("./assets/cars/bmw.png"),
     specs: {
       modelYear: 2022,
@@ -96,6 +99,7 @@ export const cars: Car[] = [
     model: "Corolla",
     year: 2021,
     price: 15,
+    distance: 1.5,
     image: require("./assets/cars/toyota.png"),
     specs: {
       modelYear: 2024,

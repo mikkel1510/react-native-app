@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
-import { Colors, Border, Spacing } from "./constants";
+import { Colors, Border, Spacing, Font } from "./constants";
 import { Car } from "./cars"
 import { useNavigation } from "@react-navigation/native";
 
@@ -16,6 +16,7 @@ const Card = ({ car }: CardProps) => {
             <Image style={styles.image}source={car.image}></Image>
             <View style={styles.infobox}>
                 <Text style={styles.header}>{car.name}</Text>
+                <Text style={styles.description}>{car.distance} miles away</Text>
                 <Text style={styles.description}>Per hour: ${car.price}</Text>
                 <Pressable style={styles.button} onPress={() => navigation.navigate("CarDetails", { carId: car.id })}>
                     <Text style={styles.buttonText}>See more</Text>
@@ -53,13 +54,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     header: {
-        fontSize: 25
+        fontSize: 25,
     },
     description: {
-        fontSize: 15
+        fontSize: 15,
     },
     infobox: {
         alignItems: 'flex-end',
-        gap: Spacing.small
+        gap: Spacing.small,
     }
 });
