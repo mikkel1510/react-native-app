@@ -1,11 +1,25 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import { cars } from "./cars";
+import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
+import { cars, CarSpecs, labels } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
+import { useState } from "react";
+import Modal from "react-native-modal";
 
 
 const CarDetailsScreen: React.FC = () => {
+
+    const [isPopUpVisible, setPopUpVisible] = useState(false)
+    const togglePopUp = () => {
+        setPopUpVisible(!isPopUpVisible);
+    }
+
+    const [isRented, setRented] = useState(false)
     
+    const toggleRented = () => {
+        setRented(!isRented);
+        setPopUpVisible(!isPopUpVisible)
+    }
+
     const route = useRoute();
     const { carId } = route.params as {carId: number}
     const car = cars.find((c) => c.id === carId);
@@ -18,18 +32,63 @@ const CarDetailsScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                <Pressable style={styles.button}>
+                <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
                     <Text style={styles.buttonText}>Rent</Text>
+                    <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
                 </Pressable>
+                <Text>Rented: {isRented ? "true" : "false"}</Text>
             </View>
-            <View style={styles.box}>
-                <Text>Showing more details for {car.name}</Text>
-                <Text>Fuel type: {car.specs.fuelType}</Text>
-                <Text>Acceleration: {car.specs.acceleration}</Text>
+
+            <View style={[styles.box, { alignItems: 'stretch' }]}>
+                {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
+                    <View style={styles.infoRow} key={key}>
+                        <Text>
+                            {labels[key]}:
+                        </Text>
+                        <Text>
+                            {car.specs[key]}
+                        </Text>
+                    </View>
+                ))}
             </View>
+
+            <Modal isVisible={isPopUpVisible} backdropColor="grey">
+                <View style={styles.popup}>
+                        <ImageBackground source={require("./assets/Calendar.png")} style={styles.calendar}>
+                            <View style={{ alignItems: 'center'}}>
+                                <Text style={styles.header}>{car.name}</Text>
+                            </View>
+                            <View style={{ paddingTop: 50 }}>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Period</Text>
+                                    <Text>Enddate</Text>
+                                </View>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Time</Text>
+                                    <Text>END</Text>
+                                </View>    
+                            </View>
+                        </ImageBackground>
+                    
+                        <View style={styles.popupRow}>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
+                                <Text style={styles.buttonText}>
+                                    Confirm
+                                </Text>
+                            </Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
+                                <Text style={styles.buttonText}>
+                                    Cancel
+                                </Text>
+                            </Pressable>
+                        </View>
+                </View>
+            </Modal>
+
         </View>
     )
 }
@@ -56,12 +115,40 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     buttonText: {
-        fontSize: 20
+        fontSize: 20,
+        fontWeight: 'bold'
     },
     button: {
         backgroundColor: Colors.accent,
         paddingVertical: Spacing.small,
         paddingHorizontal: Spacing.large,
-        borderRadius: Border.round
+        borderRadius: Border.round,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    popup: {
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        height: 600,
+        borderRadius: Border.round,
+        overflow: 'visible'
+    },
+    popupRow: {
+        flexDirection: 'row', 
+        gap: Spacing.small, 
+        justifyContent: 'center',
+        margin: Spacing.medium
+    },
+    calendar: {
+        height: 500, 
+        resizeMode: "contain",
+        justifyContent: 'flex-start', 
+        padding: Spacing.large,
+        paddingTop: 130,
+        top: -70,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })

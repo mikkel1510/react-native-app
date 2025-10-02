@@ -5,6 +5,7 @@ export const Colors = {
   accent: "#904E55",
   background: "#F2EFE9",
   text: "#252627",
+  confirm: "#32AE36",
 };
 export const Fonts = {
   regular: 16,
@@ -19,4 +20,12 @@ export const Spacing = {
 
 export const Border = {
   round: 20
+}
+
+export const Font = {
+  small: 15,
+  medium: 20,
+  large: 25,
+  xlarge: 30,
+  font: "Verdana"
 }
