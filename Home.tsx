@@ -13,6 +13,9 @@ const HomeScreen: React.FC = () => {
             <Pressable onPress={() => navigation.navigate('Cars')}>
                 <Text>Cars page</Text>
             </Pressable>
+            <Pressable onPress={() => navigation.navigate('Map')}>
+                <Text>Go to Map</Text>
+            </Pressable>
         </View>
     )
 }
