@@ -6,6 +6,7 @@ export const Colors = {
   background: "#F2EFE9",
   text: "#252627",
   confirm: "#32AE36",
+  boxColor: "#FFFFFF",
 };
 export const Fonts = {
   regular: 16,
