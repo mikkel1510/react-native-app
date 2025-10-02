@@ -47,6 +47,7 @@ const HomeScreen: React.FC = () => {
               <Text style={[styles.btnText, styles.btnAccentText]}>
                 Explore Cars
               </Text>
+            </Pressable>
           </View>
         </ImageBackground>
 
