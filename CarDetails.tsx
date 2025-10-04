@@ -1,11 +1,10 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
 import { useState } from "react";
 import Modal from "react-native-modal";
-import DropDownPicker from "react-native-dropdown-picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import RentalPopup from "./RentalPopup";
 
 
 
@@ -79,73 +78,19 @@ const CarDetailsScreen: React.FC = () => {
             </View>
 
             <Modal isVisible={isPopUpVisible} backdropColor="grey">
-                { !isRented ? (
-                    <View style={styles.popup}>
-                        <View>
-                            <View style={{ alignItems: 'center'}}>
-                                <Text style={styles.header}>{car.name}</Text>
-                            </View>
-                            <View>
-                                <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Period</Text>          
-                                    
-                                    <DropDownPicker
-                                        open={open}
-                                        value={selectedTimePeriod}
-                                        items={items}
-                                        setOpen={setOpen}
-                                        setValue={setSelectedTimePeriod}
-                                        containerStyle={styles.dropdown}
-
-                                    />
-                                    
-                                </View>
-                                <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Start date:</Text>
-                                    <DateTimePicker value={date}/>
-                                </View>
-                                <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Start time:</Text>
-                                    <DateTimePicker value={time} mode="time" minuteInterval={30}/>
-                                </View>    
-                                
-                            </View>
-                        </View>
-                        
-                        <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
-                            </Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </Pressable>
-                        </View>
-
-                    </View>
-                ) : (
-                    <View style={styles.popup}>
-                        <View style={{ alignItems: 'center'}}>
-                                <Text style={styles.header}>End rental?</Text>
-                        </View>
-                        <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.accent }]} onPress={toggleRented}>
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
-                            </Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                )}
-                
+                <RentalPopup
+                    isRented={isRented}
+                    carName={car.name}
+                    open={open}
+                    setOpen={setOpen}
+                    selectedTimePeriod={selectedTimePeriod}
+                    setSelectedTimePeriod={setSelectedTimePeriod}
+                    items={items}
+                    date={date}
+                    time={time}
+                    toggleRented={toggleRented}
+                    togglePopUp={togglePopUp}
+                />
             </Modal>
 
         </View>
@@ -186,24 +131,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: Spacing.medium
     },
-    popup: {
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-        borderRadius: Border.round,
-        padding: Spacing.medium
-    },
-    popupRow: {
-        flexDirection: 'row', 
-        gap: Spacing.small, 
-        justifyContent: 'center',
-        margin: Spacing.medium
-    },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    dropdown: {
-        height: 50,
-        width: 150,
-    }
 })
