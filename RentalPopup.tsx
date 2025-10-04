@@ -2,23 +2,27 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Border, Colors, Spacing } from "./constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 
 interface popupProps{
     isRented: boolean;
     carName: string;
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-    selectedTimePeriod: string;
-    setSelectedTimePeriod: Dispatch<SetStateAction<string>>;
-    items: {label: string; value: string}[];
-    date: Date;
-    time: Date;
     toggleRented: () => void;
     togglePopUp: () => void;
 }
 
-export default function Popup({ isRented, carName, open, setOpen, selectedTimePeriod, setSelectedTimePeriod, items, date, time, toggleRented, togglePopUp, }: popupProps) {
+
+export default function Popup({ isRented, carName, toggleRented, togglePopUp, }: popupProps) {
+    const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
+    const [date, setDate] = useState(new Date())
+    const [time, setTime] = useState(new Date())
+    const [open, setOpen] = useState(false);
+    const items = [
+        { label: "All day", value: "All day" },
+        { label: "1 hour", value: "1 hour" },
+        { label: "6 hours", value: "6 hours" }
+    ]
+    
     return (
         <View style={styles.popup}>
             { !isRented ? (           

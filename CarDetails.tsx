@@ -22,17 +22,6 @@ const CarDetailsScreen: React.FC = () => {
         setPopUpVisible(!isPopUpVisible)
     }
 
-    const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
-    const items = [
-        { label: "All day", value: "All day" },
-        { label: "1 hour", value: "1 hour" },
-        { label: "6 hours", value: "6 hours" }
-    ]
-
-    const [open, setOpen] = useState(false);
-
-    const [date, setDate] = useState(new Date())
-    const [time, setTime] = useState(new Date())
 
     const route = useRoute();
     const { carId } = route.params as {carId: number}
@@ -81,13 +70,6 @@ const CarDetailsScreen: React.FC = () => {
                 <RentalPopup
                     isRented={isRented}
                     carName={car.name}
-                    open={open}
-                    setOpen={setOpen}
-                    selectedTimePeriod={selectedTimePeriod}
-                    setSelectedTimePeriod={setSelectedTimePeriod}
-                    items={items}
-                    date={date}
-                    time={time}
                     toggleRented={toggleRented}
                     togglePopUp={togglePopUp}
                 />
