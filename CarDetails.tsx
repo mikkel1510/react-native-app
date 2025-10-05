@@ -2,7 +2,8 @@ import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
-import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import Modal from "react-native-modal";
 
 
@@ -13,16 +14,35 @@ const CarDetailsScreen: React.FC = () => {
         setPopUpVisible(!isPopUpVisible);
     }
 
-    const [isRented, setRented] = useState(false)
-    
+    const [isRented, setRented] = useState(false);
+
+    const route = useRoute();
+    const { carId } = route.params as { carId: number };
+    const car = cars.find((c) => c.id === carId);
+
+    const storageKey = `rented:${carId}`;
+
+    useEffect(() => {
+      const getStored = async () => {
+        const v = await AsyncStorage.getItem(storageKey);
+        if (v) setRented(v === "true");
+      };
+      getStored();
+    }, [storageKey]);
+
+    const confirmRent = async () => {
+      const next = !isRented;
+      setRented(next);
+      await AsyncStorage.setItem(storageKey, String(next));
+      setPopUpVisible(false);
+    };
+
+
+
     const toggleRented = () => {
         setRented(!isRented);
         setPopUpVisible(!isPopUpVisible)
     }
-
-    const route = useRoute();
-    const { carId } = route.params as {carId: number}
-    const car = cars.find((c) => c.id === carId);
 
     if (!car){
         return (
@@ -32,12 +52,12 @@ const CarDetailsScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            
+
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
                 <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
-                    <Text style={styles.buttonText}>Rent</Text>
+                    <Text style={styles.buttonText}>{isRented ? "Change" : "Rent"}</Text>
                     <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
                 </Pressable>
                 <Text>Rented: {isRented ? "true" : "false"}</Text>
@@ -70,15 +90,13 @@ const CarDetailsScreen: React.FC = () => {
                                 <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
                                     <Text>Time</Text>
                                     <Text>END</Text>
-                                </View>    
+                                </View>
                             </View>
                         </ImageBackground>
-                    
+
                         <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={confirmRent}>
+                                <Text style={styles.buttonText}>{isRented ? "Unrent" : "Confirm"}</Text>
                             </Pressable>
                             <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
                                 <Text style={styles.buttonText}>
@@ -107,8 +125,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     image: {
-        height: 150, 
-        width: 220, 
+        height: 150,
+        width: 220,
         resizeMode: "contain"
     },
     header: {
@@ -134,15 +152,15 @@ const styles = StyleSheet.create({
         overflow: 'visible'
     },
     popupRow: {
-        flexDirection: 'row', 
-        gap: Spacing.small, 
+        flexDirection: 'row',
+        gap: Spacing.small,
         justifyContent: 'center',
         margin: Spacing.medium
     },
     calendar: {
-        height: 500, 
+        height: 500,
         resizeMode: "contain",
-        justifyContent: 'flex-start', 
+        justifyContent: 'flex-start',
         padding: Spacing.large,
         paddingTop: 130,
         top: -70,
@@ -151,4 +169,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     }
-})
+});
