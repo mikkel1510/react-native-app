@@ -5,42 +5,11 @@ import { Border, Colors, Font, Spacing } from "./constants";
 import { useState } from "react";
 import Modal from "react-native-modal";
 import RentalPopup from "./RentalPopup";
+import { useRental } from "./RentalContext";
 
 
 
 const CarDetailsScreen: React.FC = () => {
-
-    const [isPopUpVisible, setPopUpVisible] = useState(false)
-    const togglePopUp = () => {
-        setPopUpVisible(!isPopUpVisible);
-    }
-
-    const [startTime, setStartTime] = useState(new Date())
-    const [endTime, setEndTime] = useState(new Date())
-
-    const [isRented, setRented] = useState(false)
-
-    const rent = (startDate: Date, timePeriod: string) => {
-        setStartTime(startDate)
-        switch (timePeriod) {
-            case "1":
-                setEndTime(new Date(startTime.getTime() + 1 * 60 * 60 * 1000));
-                break;
-            case "6":
-                setEndTime(new Date(startTime.getTime() + 6 * 60 * 60 * 1000));
-                break; 
-            case "24":
-                setEndTime(new Date(startTime.getTime() + 24 * 60 * 60 * 1000));
-                break;
-                    }
-        toggleRented();
-    }
-    
-    const toggleRented = () => {
-        setRented(!isRented);
-        setPopUpVisible(!isPopUpVisible)
-    }
-
 
     const route = useRoute();
     const { carId } = route.params as {carId: number}
@@ -52,6 +21,43 @@ const CarDetailsScreen: React.FC = () => {
         )
     }
 
+    const [isPopUpVisible, setPopUpVisible] = useState(false)
+    const togglePopUp = () => {
+        setPopUpVisible(!isPopUpVisible);
+    }
+
+    const [startTime, setStartTime] = useState(new Date())
+    const [endTime, setEndTime] = useState(new Date())
+
+    const { rentedCar, setRentedCar } = useRental();
+    const [isRented, setRented] = useState(rentedCar == car.id)
+
+    const rent = (startDate: Date, timePeriod: string) => {
+        setStartTime(startDate)
+        switch (timePeriod) {
+            case "1":
+                setEndTime(new Date(startDate.getTime() + 1 * 60 * 60 * 1000));
+                break;
+            case "6":
+                setEndTime(new Date(startDate.getTime() + 6 * 60 * 60 * 1000));
+                break; 
+            case "24":
+                setEndTime(new Date(startDate.getTime() + 24 * 60 * 60 * 1000));
+                break;
+        }
+        toggleRented();
+        setRentedCar(car.id)
+    }
+    
+    const toggleRented = () => {
+        if (rentedCar != null){
+            setRentedCar(null)
+        }
+        setRented(!isRented);
+        setPopUpVisible(!isPopUpVisible)
+    }
+
+
     return (
         <View style={styles.container}>
             
@@ -60,10 +66,19 @@ const CarDetailsScreen: React.FC = () => {
                 <Image style={styles.image} source={car.image}></Image>
                 
                 { !isRented ? (
-                    <Pressable style={[styles.button, {backgroundColor: Colors.confirm}]} onPress={togglePopUp}>
-                        <Text style={styles.buttonText}>Rent</Text>
-                        <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                    </Pressable>
+                    <View>
+                    { rentedCar ? (
+                        <Pressable style={[styles.button, {backgroundColor: Colors.secondary}]} onPress={togglePopUp} disabled={true}>
+                            <Text style={styles.buttonText}>Already rented a car</Text>
+                        </Pressable>
+                    ) : (
+                        <Pressable style={[styles.button, {backgroundColor: Colors.confirm}]} onPress={togglePopUp}>
+                            <Text style={styles.buttonText}>Rent</Text>
+                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
+                        </Pressable>
+                    ) 
+                }
+                    </View> 
                 ) : (
                     <View style={{ gap: Spacing.medium }}>
                         <View>
