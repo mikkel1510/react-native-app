@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
-import { Border, Colors, Spacing } from "./constants";
+import { Border, Colors, Font, Spacing } from "./constants";
 import { useState } from "react";
 import Modal from "react-native-modal";
 import RentalPopup from "./RentalPopup";
@@ -15,7 +15,26 @@ const CarDetailsScreen: React.FC = () => {
         setPopUpVisible(!isPopUpVisible);
     }
 
+    const [startDate, setStartDate] = useState(new Date())
+    const [endTime, setEndTime] = useState(new Date())
+
     const [isRented, setRented] = useState(false)
+
+    const rent = (startDate: Date, timePeriod: string) => {
+        setStartDate(startDate)
+        switch (timePeriod) {
+            case "1":
+                setEndTime(new Date(startDate.getTime() + 1 * 60 * 60 * 1000));
+                break;
+            case "6":
+                setEndTime(new Date(startDate.getTime() + 6 * 60 * 60 * 1000));
+                break; 
+            case "24":
+                setEndTime(new Date(startDate.getTime() + 24 * 60 * 60 * 1000));
+                break;
+                    }
+        toggleRented();
+    }
     
     const toggleRented = () => {
         setRented(!isRented);
@@ -41,25 +60,37 @@ const CarDetailsScreen: React.FC = () => {
                 <Image style={styles.image} source={car.image}></Image>
                 
                 { !isRented ? (
-                    <Pressable style={styles.button} onPress={togglePopUp}>
+                    <Pressable style={[styles.button, {backgroundColor: Colors.confirm}]} onPress={togglePopUp}>
                         <Text style={styles.buttonText}>Rent</Text>
                         <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
                     </Pressable>
                 ) : (
-                    <Pressable style={styles.button} onPress={togglePopUp}>
-                        <Text style={styles.buttonText}>End rental</Text>
-                        <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                    </Pressable>
+                    <View style={{ gap: Spacing.medium }}>
+                        <View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
+                                <Text style={{ fontWeight: 'bold' }}>Rented from: </Text>
+                                <Text>{startDate.toLocaleString()}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
+                                <Text style={{ fontWeight: 'bold' }}>Until: </Text>
+                                <Text>{endTime.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                        <Pressable style={styles.button} onPress={togglePopUp}>
+                            <Text style={styles.buttonText}>End rental</Text>
+                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
+                        </Pressable>
+                    </View>
                 )}
             </View>
 
             <View style={[styles.box, { alignItems: 'stretch' }]}>
                 {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
                     <View style={styles.infoRow} key={key}>
-                        <Text>
+                        <Text style={{ fontFamily: Font.font }}>
                             {labels[key]}:
                         </Text>
-                        <Text>
+                        <Text style={{ fontFamily: Font.font }}>
                             {car.specs[key]}
                         </Text>
                     </View>
@@ -71,6 +102,7 @@ const CarDetailsScreen: React.FC = () => {
                     isRented={isRented}
                     carName={car.name}
                     toggleRented={toggleRented}
+                    rent={rent}
                     togglePopUp={togglePopUp}
                 />
             </Modal>
@@ -98,11 +130,13 @@ const styles = StyleSheet.create({
         resizeMode: "contain"
     },
     header: {
-        fontSize: 30
+        fontSize: 30,
+        fontFamily: Font.font
     },
     buttonText: {
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: Font.font
     },
     button: {
         backgroundColor: Colors.accent,
@@ -111,7 +145,7 @@ const styles = StyleSheet.create({
         borderRadius: Border.round,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: Spacing.medium
+        padding: Spacing.medium,
     },
     infoRow: {
         flexDirection: 'row',

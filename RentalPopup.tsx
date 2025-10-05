@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Border, Colors, Spacing } from "./constants";
+import { Border, Colors, Font, Spacing } from "./constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from "react";
 
@@ -8,19 +8,33 @@ interface popupProps{
     isRented: boolean;
     carName: string;
     toggleRented: () => void;
+    rent: (startDate: Date, timePeriod: string) => void;
     togglePopUp: () => void;
 }
 
-
-export default function Popup({ isRented, carName, toggleRented, togglePopUp, }: popupProps) {
+export default function Popup({ isRented, carName, toggleRented, rent, togglePopUp, }: popupProps) {
     const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
-    const [date, setDate] = useState(new Date())
-    const [time, setTime] = useState(new Date())
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    
+    const now = new Date();
+    now.setMinutes(now.getMinutes() < 30 ? 30 : 60); {/* Round current time up to next half hour */}
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    const [currentTime, setTime] = useState(now)
+    
+    const process = () => {
+        if (selectedTimePeriod === ""){
+            setErrorMessage("Please select a time period")
+        } else {
+            rent(currentTime, selectedTimePeriod)
+        }
+    }
+    
     const [open, setOpen] = useState(false);
     const items = [
-        { label: "All day", value: "All day" },
-        { label: "1 hour", value: "1 hour" },
-        { label: "6 hours", value: "6 hours" }
+        { label: "1 hour", value: "1" },
+        { label: "6 hours", value: "6" },
+        { label: "24 hours", value: "24" }
     ]
     
     return (
@@ -33,7 +47,7 @@ export default function Popup({ isRented, carName, toggleRented, togglePopUp, }:
                             </View>
                             <View>
                                 <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Period</Text>          
+                                    <Text style={styles.subHeader}>Period:</Text>          
                                     
                                     <DropDownPicker
                                         open={open}
@@ -47,18 +61,25 @@ export default function Popup({ isRented, carName, toggleRented, togglePopUp, }:
                                     
                                 </View>
                                 <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Start date:</Text>
-                                    <DateTimePicker value={date}/>
+                                    <Text style={styles.subHeader}>Start date:</Text>
+                                    <DateTimePicker value={currentTime} minimumDate={new Date()} onChange={(event, selectedDate) => { if(selectedDate) { setTime(selectedDate) } }}/>
                                 </View>
                                 <View style={[styles.popupRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                    <Text>Start time:</Text>
-                                    <DateTimePicker value={time} mode="time" minuteInterval={30}/>
+                                    <Text style={styles.subHeader}>Start time:</Text>
+                                    <DateTimePicker value={currentTime} mode="time" timeZoneName={'Europe/Copenhagen'} minuteInterval={30} onChange={(event, selectedTime) => { if (selectedTime){ setTime(selectedTime) } }}/>
                                 </View>    
                             </View>
                         </View>
+
+                        { errorMessage && (
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.error}>{errorMessage}</Text>
+                            </View>
+                            )
+                        }
                         
                         <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={process}>
                                 <Text style={styles.buttonText}>
                                     Confirm
                                 </Text>
@@ -95,11 +116,17 @@ export default function Popup({ isRented, carName, toggleRented, togglePopUp, }:
 
 const styles = StyleSheet.create({
     header: {
-        fontSize: 30
+        fontSize: Font.large,
+        fontFamily: Font.font
+    },
+    subHeader: {
+        fontSize: Font.medium,
+        fontFamily: Font.font
     },
     buttonText: {
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: Font.font
     },
     button: {
         backgroundColor: Colors.accent,
@@ -129,5 +156,8 @@ const styles = StyleSheet.create({
     dropdown: {
         height: 50,
         width: 150,
+    },
+    error: {
+        color: Colors.accent
     }
 })
