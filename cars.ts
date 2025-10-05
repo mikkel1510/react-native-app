@@ -6,7 +6,8 @@ export interface Car {
     price: number;
     distance: number;
     image: any;
-    specs: CarSpecs
+    specs: CarSpecs;
+    location: { latitude: number; longitude: number };
 }
 
 export interface CarSpecs {
@@ -28,6 +29,7 @@ export interface CarSpecs {
   gears: number;
   towingCapacity: string;
   color: string;
+  
 }
 
 export const cars: Car[] = [
@@ -59,6 +61,7 @@ export const cars: Car[] = [
       towingCapacity: "1,000 kg",
       color: "White",
     },
+    location: { latitude: 55.3686, longitude: 10.4275 },
   },
   {
     id: 2,
@@ -88,6 +91,7 @@ export const cars: Car[] = [
       towingCapacity: "1,500 kg",
       color: "Black",
     },
+    location: { latitude: 55.3959, longitude: 10.3883 },
   },
   {
     id: 3,
@@ -117,6 +121,7 @@ export const cars: Car[] = [
       towingCapacity: "750 kg",
       color: "Gray metallic",
     },
+    location: { latitude: 55.4035, longitude: 10.3830 },
   },
 ];
 
