@@ -1,9 +1,10 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
 import { Border, Colors, Spacing } from "./constants";
 import { useState } from "react";
 import Modal from "react-native-modal";
+import ButtonComponent from "./components/ButtonComponent";
 
 
 const CarDetailsScreen: React.FC = () => {
@@ -36,10 +37,10 @@ const CarDetailsScreen: React.FC = () => {
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
-                    <Text style={styles.buttonText}>Rent</Text>
-                    <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                </Pressable>
+                
+
+                <ButtonComponent onPress={togglePopUp} label="Rent" icon={require("./assets/CalendarIcon.png")}/>
+
                 <Text>Rented: {isRented ? "true" : "false"}</Text>
             </View>
 
@@ -75,16 +76,8 @@ const CarDetailsScreen: React.FC = () => {
                         </ImageBackground>
                     
                         <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={toggleRented}>
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
-                            </Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </Pressable>
+                            <ButtonComponent onPress={toggleRented} label="Confirm" backgroundColor={Colors.confirm}/>
+                            <ButtonComponent onPress={togglePopUp} label="Cancel" backgroundColor={Colors.background} textColor={Colors.text}/>
                         </View>
                 </View>
             </Modal>
