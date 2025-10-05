@@ -10,14 +10,70 @@ import {
   StyleSheet,
   ImageBackground,
   Platform,
+  Alert,
 } from "react-native";
 import { Colors, Spacing, Border, Font } from "./constants";
+import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const heroImg =
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
 
+const apiURL = "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/data.json";
+
+
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
+
+  const [data, setData] = useState<any[]>([]);
+  const [status, setStatus] = useState<string>("");
+
+  const storeKey = "cars";
+
+  const fetchData = async () => {
+    try {
+      setStatus("Fetching...");
+      const res = await fetch(apiURL);
+      const json = await res.json();
+      const list = Array.isArray(json) ? json : (json?.cars ?? []);
+      setData(json);
+      await AsyncStorage.setItem(storeKey, JSON.stringify(json));
+
+      const msg = `Saved ${list.length} items to storage.`;
+      setStatus(msg);
+      Alert.alert("Fetch complete", msg);
+
+    } catch (e: any) {
+      const msg = `Fetch failed: ${String(e?.message || e)}`;
+      setStatus(msg);
+      Alert.alert("Error", msg);
+    }
+  };
+
+  const getStoredData = async () => {
+    try {
+      setStatus("Loading from storage...");
+      const v = await AsyncStorage.getItem(storeKey);
+      if (v) {
+        const parsed = JSON.parse(v);
+        const list = Array.isArray(parsed) ? parsed : (parsed?.cars ?? []);
+        setData(list);
+        const msg = `Loaded ${list.length} items from storage.`;
+        setStatus(msg);
+        Alert.alert("Loaded", msg);
+      } else {
+        const msg = "No stored data under key 'cars'.";
+        setStatus(msg);
+        Alert.alert("Info", msg);
+      }
+    } catch (e: any) {
+      const msg = `Load failed: ${String(e?.message || e)}`;
+      setStatus(msg);
+      Alert.alert("Error", msg);
+    }
+  };
+
+
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -40,13 +96,8 @@ const HomeScreen: React.FC = () => {
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>Rent a Car</Text>
             <Text style={styles.heroSub}>Browse, compare, reserve</Text>
-            <Pressable
-              style={[styles.btn, styles.btnAccent]}
-              onPress={() => navigation.navigate("Cars" as never)}
-            >
-              <Text style={[styles.btnText, styles.btnAccentText]}>
-                Explore Cars
-              </Text>
+            <Pressable style={[styles.btn, styles.btnAccent]} onPress={() => navigation.navigate("Cars" as never)} >
+              <Text style={[styles.btnText, styles.btnAccentText]}> Explore Cars </Text>
             </Pressable>
           </View>
         </ImageBackground>
@@ -83,6 +134,16 @@ const HomeScreen: React.FC = () => {
             Prices vary by location. Check the Cars page for nearby deals.
           </Text>
         </View>
+            <View style={[styles.row]}>
+              <Pressable style={[styles.tile, styles.tilePrimary]} onPress={fetchData}>
+                <Text style={styles.tileTitle}>Fetch & Save</Text>
+                <Text style={styles.tileText}>Download API → Storage</Text>
+              </Pressable>
+              <Pressable style={[styles.tile, styles.tileSupport]} onPress={getStoredData}>
+                <Text style={styles.tileTitle}>Load Saved</Text>
+                <Text style={styles.tileText}>Read from Storage</Text>
+              </Pressable>
+            </View>
       </ScrollView>
     </SafeAreaView>
   );
