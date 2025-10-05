@@ -15,22 +15,22 @@ const CarDetailsScreen: React.FC = () => {
         setPopUpVisible(!isPopUpVisible);
     }
 
-    const [startDate, setStartDate] = useState(new Date())
+    const [startTime, setStartTime] = useState(new Date())
     const [endTime, setEndTime] = useState(new Date())
 
     const [isRented, setRented] = useState(false)
 
     const rent = (startDate: Date, timePeriod: string) => {
-        setStartDate(startDate)
+        setStartTime(startDate)
         switch (timePeriod) {
             case "1":
-                setEndTime(new Date(startDate.getTime() + 1 * 60 * 60 * 1000));
+                setEndTime(new Date(startTime.getTime() + 1 * 60 * 60 * 1000));
                 break;
             case "6":
-                setEndTime(new Date(startDate.getTime() + 6 * 60 * 60 * 1000));
+                setEndTime(new Date(startTime.getTime() + 6 * 60 * 60 * 1000));
                 break; 
             case "24":
-                setEndTime(new Date(startDate.getTime() + 24 * 60 * 60 * 1000));
+                setEndTime(new Date(startTime.getTime() + 24 * 60 * 60 * 1000));
                 break;
                     }
         toggleRented();
@@ -69,7 +69,7 @@ const CarDetailsScreen: React.FC = () => {
                         <View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
                                 <Text style={{ fontWeight: 'bold' }}>Rented from: </Text>
-                                <Text>{startDate.toLocaleString()}</Text>
+                                <Text>{startTime.toLocaleString()}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
                                 <Text style={{ fontWeight: 'bold' }}>Until: </Text>
