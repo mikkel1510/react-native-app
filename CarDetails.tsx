@@ -95,15 +95,12 @@ const CarDetailsScreen: React.FC = () => {
 
   const toggleRented = async () => {
     if (isRented) {
-      // End rental: update AsyncStorage and clear rental state
       await AsyncStorage.setItem(storageKey, "false");
       const current = await AsyncStorage.getItem("currentRental");
       if (current === String(carId)) {
         await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
       }
       setRentedCar(null);
-    } else {
-      // Start rental: handled elsewhere
     }
     setRented(!isRented);
     setPopUpVisible(!isPopUpVisible);
