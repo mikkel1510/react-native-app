@@ -15,7 +15,7 @@ const SettingsScreen: React.FC = () => {
             <View style={styles.box}>
                 <Text style={styles.header2}>Account details</Text>
 
-                <Card label='NAME' value='Niels' editButton='Edit' />
+                <Card label='NAME' value='Niels Nailer' editButton='Edit' />
                 <Card label='E-MAIL' value='nielsnailer@gmail.com' editButton='Edit' />
                 <Card label='PHONE' value='+45 42502568' editButton='Edit' />
             </View>

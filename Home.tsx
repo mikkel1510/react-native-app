@@ -1,6 +1,6 @@
 // Home.tsx
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
   ScrollView,
@@ -15,6 +15,8 @@ import ButtonComponent from "./components/ButtonComponent";
 
 const heroImg =
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
+
+
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -39,11 +41,9 @@ const HomeScreen: React.FC = () => {
           <View style={styles.heroOverlay} />
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>Rent a Car</Text>
-            <Text style={styles.heroSub}>Browse, compare, reserve</Text>
+            <Text style={styles.heroSub}>Browse, compare, reserve</Text>             
 
             <ButtonComponent labelStyle={styles.btnAccentText} onPress={() => navigation.navigate("Cars" as never)} label="Explore Cars"/>
-              
-
           </View>
         </ImageBackground>
 
