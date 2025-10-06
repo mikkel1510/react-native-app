@@ -36,8 +36,8 @@ const CarDetailsScreen: React.FC = () => {
             
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
-                <Image style={styles.image} source={car.image}></Image>
                 
+                <Image style={styles.image} source={car.image}></Image>
 
                 <ButtonComponent onPress={togglePopUp} label="Rent" icon={require("./assets/CalendarIcon.png")}/>
 

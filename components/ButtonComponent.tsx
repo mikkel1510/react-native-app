@@ -33,25 +33,24 @@ const ButtonComponent: React.FC<ButtonProps> = ({
         style={[styles.button, {backgroundColor}, style]}
         onPress={onPress}
         >
-            {icon && (
-                <Image
-                source = {icon}
-                style = {styles.icon}
-                />
-            )}
             <View style={styles.textContainer}>
                 <Text style={[styles.label, { color: textColor }, labelStyle]}>{label}</Text>
                 
                 {extraTexts.map((txt, index) => (
                     <Text
-                        key={index}
-                        style={Array.isArray(extraTextStyle) ? extraTextStyle[index] : extraTextStyle}
+                    key={index}
+                    style={Array.isArray(extraTextStyle) ? extraTextStyle[index] : extraTextStyle}
                     >
                         {txt}
                     </Text>
                 ))}
             </View>
-            
+                {icon && (
+                    <Image
+                    source = {icon}
+                    style = {styles.icon}
+                    />
+                )}
         </Pressable>
     )
 }
