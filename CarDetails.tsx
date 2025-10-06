@@ -1,8 +1,11 @@
 import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import { Border, Colors, Font, Spacing } from "./constants";
-import { useState } from "react";
+
 import Modal from "react-native-modal";
 import RentalPopup from "./RentalPopup";
 import { useRental } from "./RentalContext";
@@ -31,6 +34,48 @@ const CarDetailsScreen: React.FC = () => {
 
     const { rentedCar, setRentedCar } = useRental();
     const [isRented, setRented] = useState(rentedCar == car.id)
+      
+      const storageKey = `rented:${carId}`;
+
+    useEffect(() => {
+      const getStored = async () => {
+        const v = await AsyncStorage.getItem(storageKey);
+        if (v) setRented(v === "true");
+      };
+      getStored();
+    }, [storageKey]);
+
+    const confirmRent = async () => {
+        try {
+      const next = !isRented;
+      setRented(next);
+      await AsyncStorage.setItem(storageKey, String(next));
+
+      if (next) {
+          await AsyncStorage.multiSet([
+            ["currentRental", String(carId)],
+            ["currentRentalName", car?.name ?? ""],
+          ]);
+
+            // log for testing
+            const savedId = await AsyncStorage.getItem("currentRental");
+            const savedName = await AsyncStorage.getItem("currentRentalName");
+            console.log("Saved currentRental:", savedId, savedName);
+
+        } else {
+          const current = await AsyncStorage.getItem("currentRental");
+          if (current === String(carId)) {
+            await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
+
+            // log for testing
+            console.log("Cleared currentRental");
+          }
+        }
+
+      setPopUpVisible(false);
+    } catch (e: any) {
+          console.error("confirmRent save failed:", e);
+    }
 
     const rent = (startDate: Date, timePeriod: string) => {
         setStartTime(startDate)
@@ -57,46 +102,17 @@ const CarDetailsScreen: React.FC = () => {
         setPopUpVisible(!isPopUpVisible)
     }
 
-
     return (
         <View style={styles.container}>
-            
+
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                
-                { !isRented ? (
-                    <View>
-                    { rentedCar ? (
-                        <Pressable style={[styles.button, {backgroundColor: Colors.secondary}]} onPress={togglePopUp} disabled={true}>
-                            <Text style={styles.buttonText}>Already rented a car</Text>
-                        </Pressable>
-                    ) : (
-                        <Pressable style={[styles.button, {backgroundColor: Colors.confirm}]} onPress={togglePopUp}>
-                            <Text style={styles.buttonText}>Rent</Text>
-                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                        </Pressable>
-                    ) 
-                }
-                    </View> 
-                ) : (
-                    <View style={{ gap: Spacing.medium }}>
-                        <View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
-                                <Text style={{ fontWeight: 'bold' }}>Rented from: </Text>
-                                <Text>{startTime.toLocaleString()}</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
-                                <Text style={{ fontWeight: 'bold' }}>Until: </Text>
-                                <Text>{endTime.toLocaleString()}</Text>
-                            </View>
-                        </View>
-                        <Pressable style={styles.button} onPress={togglePopUp}>
-                            <Text style={styles.buttonText}>End rental</Text>
-                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                        </Pressable>
-                    </View>
-                )}
+                <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
+                    <Text style={styles.buttonText}>{isRented ? "Change" : "Rent"}</Text>
+                    <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
+                </Pressable>
+                <Text>Rented: {isRented ? "true" : "false"}</Text>
             </View>
 
             <View style={[styles.box, { alignItems: 'stretch' }]}>
@@ -113,13 +129,34 @@ const CarDetailsScreen: React.FC = () => {
             </View>
 
             <Modal isVisible={isPopUpVisible} backdropColor="grey">
-                <RentalPopup
-                    isRented={isRented}
-                    carName={car.name}
-                    toggleRented={toggleRented}
-                    rent={rent}
-                    togglePopUp={togglePopUp}
-                />
+                <View style={styles.popup}>
+                        <ImageBackground source={require("./assets/Calendar.png")} style={styles.calendar}>
+                            <View style={{ alignItems: 'center'}}>
+                                <Text style={styles.header}>{car.name}</Text>
+                            </View>
+                            <View style={{ paddingTop: 50 }}>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Period</Text>
+                                    <Text>Enddate</Text>
+                                </View>
+                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
+                                    <Text>Time</Text>
+                                    <Text>END</Text>
+                                </View>
+                            </View>
+                        </ImageBackground>
+
+                        <View style={styles.popupRow}>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={confirmRent}>
+                                <Text style={styles.buttonText}>{isRented ? "Unrent" : "Confirm"}</Text>
+                            </Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
+                                <Text style={styles.buttonText}>
+                                    Cancel
+                                </Text>
+                            </Pressable>
+                        </View>
+                </View>
             </Modal>
 
         </View>
@@ -140,8 +177,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     image: {
-        height: 150, 
-        width: 220, 
+        height: 150,
+        width: 220,
         resizeMode: "contain"
     },
     header: {
@@ -159,11 +196,31 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.large,
         borderRadius: Border.round,
         flexDirection: 'row',
-        alignItems: 'center',
-        padding: Spacing.medium,
+        alignItems: 'center'
+    },
+    popup: {
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        height: 600,
+        borderRadius: Border.round,
+        overflow: 'visible'
+    },
+    popupRow: {
+        flexDirection: 'row',
+        gap: Spacing.small,
+        justifyContent: 'center',
+        margin: Spacing.medium
+    },
+    calendar: {
+        height: 500,
+        resizeMode: "contain",
+        justifyContent: 'flex-start',
+        padding: Spacing.large,
+        paddingTop: 130,
+        top: -70,
     },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between'
-    },
-})
+    }
+});
