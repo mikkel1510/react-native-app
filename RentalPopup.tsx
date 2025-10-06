@@ -1,8 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Border, Colors, Font, Spacing } from "./constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from "react";
+import ButtonComponent from "./components/ButtonComponent";
 
 interface popupProps{
     isRented: boolean;
@@ -79,16 +80,9 @@ export default function Popup({ isRented, carName, toggleRented, rent, togglePop
                         }
                         
                         <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={process}>
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
-                            </Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </Pressable>
+                            <ButtonComponent onPress={process} label="Confirm" backgroundColor={Colors.confirm}/>
+                            <ButtonComponent onPress={togglePopUp} label="Cancel" backgroundColor={Colors.background} textColor={Colors.primary}/>
+
                         </View>
                 </View> 
             ) : (
@@ -97,16 +91,8 @@ export default function Popup({ isRented, carName, toggleRented, rent, togglePop
                         <Text style={styles.header}>End rental?</Text>
                     </View>
                     <View style={styles.popupRow}>
-                        <Pressable style={[styles.button, { backgroundColor: Colors.accent }]} onPress={toggleRented}>
-                            <Text style={styles.buttonText}>
-                                Confirm
-                            </Text>
-                        </Pressable>
-                        <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                            <Text style={styles.buttonText}>
-                                Cancel
-                            </Text>
-                        </Pressable>
+                        <ButtonComponent onPress={toggleRented} label="Confirm" backgroundColor={Colors.confirm}/>
+                        <ButtonComponent onPress={togglePopUp} label="Cancel" backgroundColor={Colors.background} textColor="#000"/>
                     </View>
                 </View>
             )} 

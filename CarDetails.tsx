@@ -62,12 +62,11 @@ const CarDetailsScreen: React.FC = () => {
           ["currentRental", String(carId)],
           ["currentRentalName", car?.name ?? ""],
         ]);
-        console.log("Saved currentRental:", carId, car?.name);
+        
       } else {
         const current = await AsyncStorage.getItem("currentRental");
         if (current === String(carId)) {
           await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
-          console.log("Cleared currentRental");
         }
       }
       setPopUpVisible(false);
@@ -94,8 +93,13 @@ const CarDetailsScreen: React.FC = () => {
     setRentedCar(car.id);
   };
 
-  const toggleRented = () => {
-    if (rentedCar != null) {
+  const toggleRented = async () => {
+    if (isRented) {
+      await AsyncStorage.setItem(storageKey, "false");
+      const current = await AsyncStorage.getItem("currentRental");
+      if (current === String(carId)) {
+        await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
+      }
       setRentedCar(null);
     }
     setRented(!isRented);
@@ -129,7 +133,7 @@ const CarDetailsScreen: React.FC = () => {
         />
 
     {!isRented ? (
-  <View>
+      <View>
     {rentedCar ? (
       <ButtonComponent
         label="Already rented a car"
@@ -158,6 +162,7 @@ const CarDetailsScreen: React.FC = () => {
         <Text>{endTime.toLocaleString()}</Text>
       </View>
     </View>
+    
 
     <ButtonComponent
       label="End rental"
@@ -188,6 +193,7 @@ const CarDetailsScreen: React.FC = () => {
           togglePopUp={togglePopUp}
         />
       </Modal>
+    </View>
     </View>
   );
 };
