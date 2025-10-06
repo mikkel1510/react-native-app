@@ -209,6 +209,7 @@ const CarDetailsScreen: React.FC = () => {
         <RentalPopup
           isRented={isRented}
           carName={car.name}
+          price={car.price}
           toggleRented={toggleRented}
           rent={rent}
           togglePopUp={togglePopUp}

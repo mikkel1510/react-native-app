@@ -8,14 +8,18 @@ import ButtonComponent from "./components/ButtonComponent";
 interface popupProps{
     isRented: boolean;
     carName: string;
+    price: number;
     toggleRented: () => void;
     rent: (startDate: Date, timePeriod: string) => void;
     togglePopUp: () => void;
 }
 
-export default function Popup({ isRented, carName, toggleRented, rent, togglePopUp, }: popupProps) {
+export default function Popup({ isRented, carName, price, toggleRented, rent, togglePopUp, }: popupProps) {
     const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const hours = selectedTimePeriod ? parseInt(selectedTimePeriod) : 0;
+    const totalPrice = hours * price;
+
     
     const now = new Date();
     now.setMinutes(now.getMinutes() < 30 ? 30 : 60); {/* Round current time up to next half hour */}
@@ -78,6 +82,22 @@ export default function Popup({ isRented, carName, toggleRented, rent, togglePop
                             </View>
                             )
                         }
+
+                        <View style={styles.priceBox}>
+                            <View style={[styles.popupRow, { justifyContent: "space-between", alignItems: "center" }]}>
+                                <Text style={styles.subHeader}>Price per hour:</Text>
+                                <Text style={styles.subHeader}>{price} DKK</Text>
+                            </View>
+
+                            {selectedTimePeriod ? (
+                                <View style={[styles.popupRow, { justifyContent: "space-between", alignItems: "center" }]}>
+                                    <Text style={styles.subHeader}>Total price:</Text>
+                                    <Text style={[styles.subHeader, { fontWeight: "bold" }]}>{totalPrice} DKK</Text>
+                                </View>
+                            ) : null}
+                        </View>
+
+
                         
                         <View style={styles.popupRow}>
                             <ButtonComponent onPress={process} label="Confirm" backgroundColor={Colors.confirm}/>
@@ -92,7 +112,7 @@ export default function Popup({ isRented, carName, toggleRented, rent, togglePop
                     </View>
                     <View style={styles.popupRow}>
                         <ButtonComponent onPress={toggleRented} label="Confirm" backgroundColor={Colors.confirm}/>
-                        <ButtonComponent onPress={togglePopUp} label="Cancel" backgroundColor={Colors.background} textColor="#000"/>
+                        <ButtonComponent onPress={togglePopUp} label="Cancel" backgroundColor={Colors.background} textColor="#000000ff"/>
                     </View>
                 </View>
             )} 
@@ -138,6 +158,10 @@ const styles = StyleSheet.create({
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between'
+    },
+    priceBox: {
+        backgroundColor: Colors.background,
+        borderRadius: Border.round
     },
     dropdown: {
         height: 50,

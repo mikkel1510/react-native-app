@@ -25,7 +25,7 @@ const Card = ({ car }: CardProps) => {
             <View style={styles.infobox}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Text style={styles.description}>{car.distance} miles away</Text>
-                <Text style={styles.description}>Per hour: ${car.price}</Text>
+                <Text style={styles.description}>Per hour: {car.price} DKK</Text>
                 {rentedCar == car.id ? <Text>RENTED</Text> : null}
 
                 <ButtonComponent onPress={() => navigation.navigate("CarDetails", { carId: car.id })} label="See more"/>
