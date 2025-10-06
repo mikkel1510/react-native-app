@@ -104,15 +104,43 @@ const CarDetailsScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-
+            
             <View style={styles.box}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Image style={styles.image} source={car.image}></Image>
-                <Pressable style={[styles.button, { gap: Spacing.medium }]} onPress={togglePopUp}>
-                    <Text style={styles.buttonText}>{isRented ? "Change" : "Rent"}</Text>
-                    <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
-                </Pressable>
-                <Text>Rented: {isRented ? "true" : "false"}</Text>
+                
+                { !isRented ? (
+                    <View>
+                    { rentedCar ? (
+                        <Pressable style={[styles.button, {backgroundColor: Colors.secondary}]} onPress={togglePopUp} disabled={true}>
+                            <Text style={styles.buttonText}>Already rented a car</Text>
+                        </Pressable>
+                    ) : (
+                        <Pressable style={[styles.button, {backgroundColor: Colors.confirm}]} onPress={togglePopUp}>
+                            <Text style={styles.buttonText}>Rent</Text>
+                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
+                        </Pressable>
+                    ) 
+                }
+                    </View> 
+                ) : (
+                    <View style={{ gap: Spacing.medium }}>
+                        <View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
+                                <Text style={{ fontWeight: 'bold' }}>Rented from: </Text>
+                                <Text>{startTime.toLocaleString()}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.medium }}>
+                                <Text style={{ fontWeight: 'bold' }}>Until: </Text>
+                                <Text>{endTime.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                        <Pressable style={styles.button} onPress={togglePopUp}>
+                            <Text style={styles.buttonText}>End rental</Text>
+                            <Image source={require("./assets/CalendarIcon.png")} style={{ width: 35, height: 35 }}></Image>
+                        </Pressable>
+                    </View>
+                )}
             </View>
 
             <View style={[styles.box, { alignItems: 'stretch' }]}>
@@ -129,34 +157,13 @@ const CarDetailsScreen: React.FC = () => {
             </View>
 
             <Modal isVisible={isPopUpVisible} backdropColor="grey">
-                <View style={styles.popup}>
-                        <ImageBackground source={require("./assets/Calendar.png")} style={styles.calendar}>
-                            <View style={{ alignItems: 'center'}}>
-                                <Text style={styles.header}>{car.name}</Text>
-                            </View>
-                            <View style={{ paddingTop: 50 }}>
-                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
-                                    <Text>Period</Text>
-                                    <Text>Enddate</Text>
-                                </View>
-                                <View style={[styles.popupRow, { justifyContent: 'space-between' }]}>
-                                    <Text>Time</Text>
-                                    <Text>END</Text>
-                                </View>
-                            </View>
-                        </ImageBackground>
-
-                        <View style={styles.popupRow}>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.confirm }]} onPress={confirmRent}>
-                                <Text style={styles.buttonText}>{isRented ? "Unrent" : "Confirm"}</Text>
-                            </Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: Colors.background }]} onPress={togglePopUp}>
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </Pressable>
-                        </View>
-                </View>
+                <RentalPopup
+                    isRented={isRented}
+                    carName={car.name}
+                    toggleRented={toggleRented}
+                    rent={rent}
+                    togglePopUp={togglePopUp}
+                />
             </Modal>
 
         </View>
