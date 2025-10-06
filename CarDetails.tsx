@@ -40,6 +40,15 @@ const CarDetailsScreen: React.FC = () => {
 
         const rentedStatus = await AsyncStorage.getItem(storageKey);
         setRented(rentedStatus === "true");
+
+        const [start, end] = await AsyncStorage.multiGet([
+        `${storageKey}:startTime`,
+        `${storageKey}:endTime`,
+      ]);
+
+      if (start[1]) setStartTime(new Date(start[1]));
+      if (end[1]) setEndTime(new Date(end[1]));
+
       } catch (e) {
         console.error("Error loading car:", e);
       } finally {
@@ -75,7 +84,7 @@ const CarDetailsScreen: React.FC = () => {
     }
   };
 
-  const rent = (startDate: Date, timePeriod: string) => {
+  const rent = async (startDate: Date, timePeriod: string) => {
     setStartTime(startDate);
     switch (timePeriod) {
       case "1":
@@ -88,6 +97,12 @@ const CarDetailsScreen: React.FC = () => {
         setEndTime(new Date(startDate.getTime() + 24 * 60 * 60 * 1000));
         break;
     }
+
+    await AsyncStorage.multiSet([
+      [`${storageKey}:startTime`, startDate.toISOString()],
+      [`${storageKey}:endTime`, new Date(startDate.getTime() + Number(timePeriod) * 60 * 60 * 1000).toISOString()],
+    ]);
+
     toggleRented();
     confirmRent();
     setRentedCar(car.id);
@@ -97,8 +112,14 @@ const CarDetailsScreen: React.FC = () => {
     if (isRented) {
       await AsyncStorage.setItem(storageKey, "false");
       const current = await AsyncStorage.getItem("currentRental");
-      if (current === String(carId)) {
-        await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
+      if (isRented) {
+        await AsyncStorage.multiRemove([
+          storageKey,
+          `${storageKey}:startTime`,
+          `${storageKey}:endTime`,
+          "currentRental",
+          "currentRentalName",
+        ]);
       }
       setRentedCar(null);
     }
