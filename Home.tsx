@@ -1,6 +1,6 @@
 // Home.tsx
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
   ScrollView,
@@ -13,7 +13,6 @@ import {
   Alert,
 } from "react-native";
 import { Colors, Spacing, Border, Font } from "./constants";
-import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const heroImg =
@@ -36,13 +35,8 @@ const HomeScreen: React.FC = () => {
       const res = await fetch(apiURL);
       const json = await res.json();
       const list = Array.isArray(json) ? json : (json?.cars ?? []);
-      setData(json);
-      await AsyncStorage.setItem(storeKey, JSON.stringify(json));
-
-      const msg = `Saved ${list.length} items to storage.`;
-      setStatus(msg);
-      Alert.alert("Fetch complete", msg);
-
+      setData(list);
+      await AsyncStorage.setItem(storeKey, JSON.stringify(list));
     } catch (e: any) {
       const msg = `Fetch failed: ${String(e?.message || e)}`;
       setStatus(msg);
@@ -50,28 +44,21 @@ const HomeScreen: React.FC = () => {
     }
   };
 
-  const getStoredData = async () => {
-    try {
-      setStatus("Loading from storage...");
-      const v = await AsyncStorage.getItem(storeKey);
-      if (v) {
-        const parsed = JSON.parse(v);
-        const list = Array.isArray(parsed) ? parsed : (parsed?.cars ?? []);
-        setData(list);
-        const msg = `Loaded ${list.length} items from storage.`;
-        setStatus(msg);
-        Alert.alert("Loaded", msg);
-      } else {
-        const msg = "No stored data under key 'cars'.";
-        setStatus(msg);
-        Alert.alert("Info", msg);
-      }
-    } catch (e: any) {
-      const msg = `Load failed: ${String(e?.message || e)}`;
-      setStatus(msg);
-      Alert.alert("Error", msg);
-    }
-  };
+
+  useEffect(() => {
+    (async () => {
+      await loadStoredData();
+      await fetchData();
+    })();
+  }, []
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+      return () => {};
+    }, [])
+  );
 
 
 
@@ -134,16 +121,6 @@ const HomeScreen: React.FC = () => {
             Prices vary by location. Check the Cars page for nearby deals.
           </Text>
         </View>
-            <View style={[styles.row]}>
-              <Pressable style={[styles.tile, styles.tilePrimary]} onPress={fetchData}>
-                <Text style={styles.tileTitle}>Fetch & Save</Text>
-                <Text style={styles.tileText}>Download API → Storage</Text>
-              </Pressable>
-              <Pressable style={[styles.tile, styles.tileSupport]} onPress={getStoredData}>
-                <Text style={styles.tileTitle}>Load Saved</Text>
-                <Text style={styles.tileText}>Read from Storage</Text>
-              </Pressable>
-            </View>
       </ScrollView>
     </SafeAreaView>
   );
