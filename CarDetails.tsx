@@ -168,6 +168,7 @@ const CarDetailsScreen: React.FC = () => {
 
         </View>
     )
+    }
 }
 
 export default CarDetailsScreen;
