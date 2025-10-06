@@ -1,4 +1,3 @@
-// Home.tsx
 import React from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import {
@@ -10,16 +9,68 @@ import {
   ImageBackground,
   Platform,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Spacing, Border, Font } from "./constants";
 import ButtonComponent from "./components/ButtonComponent";
+import { useRental } from "./RentalContext";
+import ActiveRentalBar, { ActiveRentalData } from "./ActiveRentalBar";
 
 const heroImg =
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
-
-
+  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop";
 
 const HomeScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const { rentedCar } = useRental(); // which car id is rented
+
+  const [active, setActive] = React.useState<ActiveRentalData | null>(null);
+
+  const refreshActive = React.useCallback(async () => {
+    if (!rentedCar) {
+      setActive(null);
+      return;
+    }
+
+    try {
+      const carsRaw = await AsyncStorage.getItem("cars");
+      let car: any | null = null;
+      if (carsRaw) {
+        const parsed = JSON.parse(carsRaw);
+        const list = Array.isArray(parsed) ? parsed : parsed?.cars ?? [];
+        car = list.find((c: any) => c.id === rentedCar) || null;
+      }
+
+      const endIso =
+        (await AsyncStorage.getItem(`rented:${rentedCar}:endTime`)) || null;
+
+      setActive({
+        carId: rentedCar,
+        carName: car?.name ?? "Current rental",
+        imageUri: car?.image ?? null,
+        endsAt: endIso ? new Date(endIso) : null,
+      });
+    } catch (e) {
+      console.warn("Active rental load failed:", e);
+      setActive(null);
+    }
+  }, [rentedCar]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshActive();
+      return () => {};
+    }, [refreshActive])
+  );
+
+  // sticky bar: tick every 30s so the label updates
+  React.useEffect(() => {
+    if (!active?.endsAt) return;
+    const t = setInterval(() => {
+      setActive((prev) =>
+        prev ? { ...prev, endsAt: new Date(prev.endsAt!) } : prev
+      );
+    }, 30_000);
+    return () => clearInterval(t);
+  }, [active?.endsAt]);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -27,12 +78,14 @@ const HomeScreen: React.FC = () => {
         {/* Top bar: logo + settings */}
         <View style={styles.topRow}>
           <Text style={styles.logo}>ABOVE</Text>
-          
-          <ButtonComponent onPress={() => navigation.navigate("Settings" as never)} icon={require("./assets/gear.png")} backgroundColor='transparent'/>
-
+          <ButtonComponent
+            onPress={() => navigation.navigate("Settings")}
+            icon={require("./assets/gear.png")}
+            backgroundColor="transparent"
+          />
         </View>
 
-        {/* HERO with background image */}
+        {/* Hero card with background image */}
         <ImageBackground
           source={{ uri: heroImg }}
           style={styles.hero}
@@ -41,25 +94,34 @@ const HomeScreen: React.FC = () => {
           <View style={styles.heroOverlay} />
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>Rent a Car</Text>
-            <Text style={styles.heroSub}>Browse, compare, reserve</Text>             
+            <Text style={styles.heroSub}>Browse, compare, reserve</Text>
 
-            <ButtonComponent labelStyle={styles.btnAccentText} onPress={() => navigation.navigate("Cars" as never)} label="Explore Cars"/>
+            <ButtonComponent
+              labelStyle={styles.btnAccentText}
+              onPress={() => navigation.navigate("Cars")}
+              label="Explore Cars"
+            />
           </View>
         </ImageBackground>
 
         {/* Quick actions */}
         <View style={styles.row}>
-          {/* Recent rentals */}
-          
-          <ButtonComponent style={[styles.tile, styles.tilePrimary]} onPress={() => navigation.navigate("RecentRentals" as never)} label="Recent Rentals" labelStyle={styles.tileTitle}
-            extraText={"See your last bookings"} extraTextStyle={styles.tileText} />
-
-
-          {/* Support — red color */}
-          
-          <ButtonComponent style={[styles.tile, styles.tileSupport]} onPress={() => console.log("Support screen not yet implemented")} label="Support" labelStyle={styles.tileTitle}
-            extraText={"We're here to help!"} extraTextStyle={styles.tileText} />
-          
+          <ButtonComponent
+            style={[styles.tile, styles.tilePrimary]}
+            onPress={() => navigation.navigate("RecentRentals")}
+            label="Recent Rentals"
+            labelStyle={styles.tileTitle}
+            extraText={"See your last bookings"}
+            extraTextStyle={styles.tileText}
+          />
+          <ButtonComponent
+            style={[styles.tile, styles.tileSupport]}
+            onPress={() => console.log("Support not implemented")}
+            label="Support"
+            labelStyle={styles.tileTitle}
+            extraText={"We're here to help!"}
+            extraTextStyle={styles.tileText}
+          />
         </View>
 
         {/* Info card */}
@@ -70,6 +132,18 @@ const HomeScreen: React.FC = () => {
           </Text>
         </View>
       </ScrollView>
+
+      {/* sticky bar: only show if we have a current rental */}
+      {active && (
+        <View style={styles.nowWrap}>
+          <ActiveRentalBar
+            data={active}
+            onPress={() =>
+              navigation.navigate("CarDetails", { carId: active.carId })
+            }
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -81,7 +155,7 @@ const styles = StyleSheet.create({
   container: {
     padding: Spacing.medium,
     gap: Spacing.medium,
-    paddingBottom: Spacing.large,
+    paddingBottom: Spacing.large + 80, // make room for active rental bar bar
   },
 
   /* Top bar */
@@ -96,16 +170,14 @@ const styles = StyleSheet.create({
     fontSize: Font.large,
     fontWeight: "900",
     letterSpacing: 2,
-    // use a heavier/condensed system face to feel like a wordmark
     fontFamily: Platform.select({
       ios: "AvenirNext-DemiBold",
       android: "sans-serif-condensed",
       default: Font.font,
     }),
   },
-  gear: { fontSize: 26 },
 
-  /* HERO */
+  /* Hero card */
   hero: {
     height: 220,
     borderRadius: Border.round,
@@ -135,24 +207,14 @@ const styles = StyleSheet.create({
     fontFamily: Font.font,
     textAlign: "center",
   },
-
-  /* CTA inside hero */
-  btn: {
-    paddingHorizontal: Spacing.large,
-    paddingVertical: Spacing.small,
-    borderRadius: Border.round,
-    marginTop: Spacing.small,
-  },
-  btnAccent: { backgroundColor: Colors.accent },
   btnAccentText: {
     color: "#fff",
     fontFamily: Font.font,
     fontWeight: "700",
     fontSize: Font.medium,
   },
-  btnText: { fontFamily: Font.font },
 
-  /* Quick action tiles */
+  /* Tiles */
   row: { flexDirection: "row", gap: Spacing.medium },
   tile: {
     flex: 1,
@@ -195,5 +257,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontSize: Font.small,
     fontFamily: Font.font,
+  },
+
+  /* Active rental bar */
+  nowWrap: {
+    position: "absolute",
+    left: Spacing.medium,
+    right: Spacing.medium,
+    bottom: Spacing.medium,
   },
 });
