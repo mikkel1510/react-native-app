@@ -1,55 +1,33 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import { Colors, Border, Spacing, Font, Fonts } from "./constants";
 import { Car } from "./cars"
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRental } from "./RentalContext";
 
 
 interface CardProps {
     car: Car;
 }
 
-
 const Card = ({ car }: CardProps) => {
     const navigation = useNavigation();
-    const [isRented, setIsRented] = useState(false);
+    const { rentedCar, setRentedCar } = useRental();
 
-     const load = useCallback(async () => {
-        const v = await AsyncStorage.getItem(`rented:${car.id}`);
-        setIsRented(v === "true");
-      }, [car.id]);
-
-    useEffect(() => {
-        load();
-      }, [load]);
-
-    useFocusEffect(
-        useCallback(() => {
-          let active = true;
-          (async () => {
-            const v = await AsyncStorage.getItem(`rented:${car.id}`);
-            if (active) setIsRented(v === "true");
-          })();
-          return () => {
-            active = false;
-          };
-        }, [car.id])
-    );
 
     return (
         <View style={styles.card}>
             <View style={styles.imageContainer}>
-                <Image style={styles.image}source={car.image}></Image>
+                <Image style={styles.image} source={{ uri: car.image }} />
             </View>
             <View style={styles.infobox}>
                 <Text style={styles.header}>{car.name}</Text>
                 <Text style={styles.description}>{car.distance} miles away</Text>
                 <Text style={styles.description}>Per hour: ${car.price}</Text>
 
-                {isRented ? <Text style={styles.rentedBadge}>RENTED</Text> : null}
+                {rentedCar == car.id ? <Text>RENTED</Text> : null}
 
-                <Pressable style={styles.button} onPress={() => navigation.navigate("CarDetails", { carId: car.id })}>
+                <Pressable style={styles.button} onPress={() => navigation.navigate("CarDetails" , { carId: car.id })}>
                     <Text style={styles.buttonText}>See more</Text>
                 </Pressable>
             </View>

@@ -18,49 +18,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const heroImg =
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
 
-const apiURL = "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/data.json";
 
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
-
-  const [data, setData] = useState<any[]>([]);
-  const [status, setStatus] = useState<string>("");
-
-  const storeKey = "cars";
-
-  const fetchData = async () => {
-    try {
-      setStatus("Fetching...");
-      const res = await fetch(apiURL);
-      const json = await res.json();
-      const list = Array.isArray(json) ? json : (json?.cars ?? []);
-      setData(list);
-      await AsyncStorage.setItem(storeKey, JSON.stringify(list));
-    } catch (e: any) {
-      const msg = `Fetch failed: ${String(e?.message || e)}`;
-      setStatus(msg);
-      Alert.alert("Error", msg);
-    }
-  };
-
-
-  useEffect(() => {
-    (async () => {
-      await loadStoredData();
-      await fetchData();
-    })();
-  }, []
-  );
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchData();
-      return () => {};
-    }, [])
-  );
-
-
 
   return (
     <SafeAreaView style={styles.safe}>
