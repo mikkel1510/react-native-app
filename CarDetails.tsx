@@ -129,7 +129,7 @@ const CarDetailsScreen: React.FC = () => {
         />
 
     {!isRented ? (
-  <View>
+      <View>
     {rentedCar ? (
       <ButtonComponent
         label="Already rented a car"
@@ -158,6 +158,7 @@ const CarDetailsScreen: React.FC = () => {
         <Text>{endTime.toLocaleString()}</Text>
       </View>
     </View>
+    
 
     <ButtonComponent
       label="End rental"
@@ -188,6 +189,7 @@ const CarDetailsScreen: React.FC = () => {
           togglePopUp={togglePopUp}
         />
       </Modal>
+    </View>
     </View>
   );
 };

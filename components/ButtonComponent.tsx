@@ -5,7 +5,7 @@ import { labels } from '../cars';
 
 interface ButtonProps {
     label?: string;
-    onPress: () => void
+    onPress?: () => void
     backgroundColor?: string;
     textColor?: string;
     labelStyle?: TextStyle | TextStyle[];
@@ -13,6 +13,7 @@ interface ButtonProps {
     style?: ViewStyle | ViewStyle[];
     extraText?: string | string[],
     extraTextStyle?: TextStyle | TextStyle[];
+    disabled?: boolean;
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({
@@ -24,6 +25,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
     icon,
     extraText,
     extraTextStyle,
+    disabled = false,
     style
 }) => {
       const extraTexts = Array.isArray(extraText) ? extraText : extraText ? [extraText] : [];
@@ -31,7 +33,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
     return (
         <Pressable
         style={[styles.button, {backgroundColor}, style]}
-        onPress={onPress}
+        onPress={!disabled ? onPress : undefined}
         >
             <View style={styles.textContainer}>
                 <Text style={[styles.label, { color: textColor }, labelStyle]}>{label}</Text>

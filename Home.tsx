@@ -51,7 +51,7 @@ const HomeScreen: React.FC = () => {
         <View style={styles.row}>
           {/* Recent rentals */}
           
-          <ButtonComponent style={[styles.tile, styles.tilePrimary]} onPress={() => console.log("Recent Rentals screen not yet implemented")} label="Recent Rentals" labelStyle={styles.tileTitle}
+          <ButtonComponent style={[styles.tile, styles.tilePrimary]} onPress={() => navigation.navigate("RecentRentals" as never)} label="Recent Rentals" labelStyle={styles.tileTitle}
             extraText={"See your last bookings"} extraTextStyle={styles.tileText} />
 
 

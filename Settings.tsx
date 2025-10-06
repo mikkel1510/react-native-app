@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Pressable, onPressEdit} from "react-native";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView} from "react-native";
 import { Colors, Spacing, Border, Font } from "./constants";
+import ButtonComponent from "./components/ButtonComponent";
 
 const SettingsScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -15,22 +16,20 @@ const SettingsScreen: React.FC = () => {
             <View style={styles.box}>
                 <Text style={styles.header2}>Account details</Text>
 
-                <Card label='NAME' value='Niels Nailer' editButton='Edit' />
-                <Card label='E-MAIL' value='nielsnailer@gmail.com' editButton='Edit' />
-                <Card label='PHONE' value='+45 42502568' editButton='Edit' />
+                <Card label='NAME' value='Niels Nailer'  />
+                <Card label='E-MAIL' value='nielsnailer@gmail.com'  />
+                <Card label='PHONE' value='+45 42502568'  />
             </View>
 
             <View style={styles.box}>
                 <Text style={styles.header2}>Settings</Text>
 
-                <Card label='Language' value='English' editButton='Edit' />
-                <Card label='Theme' value='Light' editButton='Edit' />
+                <Card label='Language' value='English'  />
+                <Card label='Theme' value='Light'  />
             </View>
 
             <View>
-                <Pressable style={styles.logoutBtn}>
-                    <Text style={styles.logoutBtnText}>Logout</Text>
-                </Pressable>
+                <ButtonComponent label="Logout" backgroundColor={Colors.text}/>
             </View>
 
         </ScrollView>
@@ -38,19 +37,16 @@ const SettingsScreen: React.FC = () => {
     );
 };
 
-type CardProps = {label: string; value: string; editButton?: () => void;};
+type CardProps = {label: string; value: string;};
 
-const Card: React.FC<CardProps> = ({label, value, editButton}) => {
+const Card: React.FC<CardProps> = ({label, value}) => {
     return(
         <View style={styles.card}>
             <View>
             <Text style={styles.cardLabel}>{label}</Text>
             <Text>{value}</Text>
             </View>
-
-            <Pressable onPress={onPressEdit} style={styles.editBtn}>
-                <Text style={styles.cardLabel}>{editButton}</Text>
-            </Pressable>
+            <ButtonComponent label="Edit"/>
         </View>
         );
     };
@@ -108,25 +104,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         },
 
-    editBtn: {
-        paddingHorizontal: '10%',
-        paddingVertical: '2%',
-        borderRadius: 20,
-        backgroundColor: Colors.accent,
-        },
-
-    logoutBtn: {
-        paddingHorizontal: '10%',
-        paddingVertical: '2%',
-        borderRadius: 20,
-        backgroundColor: Colors.text,
-        },
-
-    logoutBtnText: {
-        paddingHorizontal: '37%',
-        color: Colors.boxColor,
-        fontSize: Colors.large,
-        }
     });
 
 export default SettingsScreen;

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Font, Spacing, Border } from "./constants";
+import ButtonComponent from "./components/ButtonComponent";
 
 const mockRentals = [
   {
