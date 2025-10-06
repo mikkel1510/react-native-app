@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import React, { useMemo, useState, useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { Marker, Callout } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
-import { cars } from "./cars";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { distanceKm, formatKm, LatLng } from "./Math";
 
 type Props = {
@@ -11,20 +11,43 @@ type Props = {
 
 const CarPin: React.FC<Props> = ({ userLoc }) => {
   const navigation = useNavigation<any>();
+  const [cars, setCars] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Compute distance for each car
+  useEffect(() => {
+    const loadCars = async () => {
+      try {
+        const stored = await AsyncStorage.getItem("cars");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const list = Array.isArray(parsed) ? parsed : parsed?.cars ?? [];
+          setCars(list);
+        }
+      } catch (err) {
+        console.error("Failed to load cars:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCars();
+  }, []);
+
   const distances = useMemo(() => {
     const map = new Map<number, number | null>();
     for (const car of cars) {
       map.set(car.id, userLoc ? distanceKm(userLoc, car.location) : null);
     }
     return map;
-  }, [userLoc]);
+  }, [userLoc, cars]);
+
+  if (loading || cars.length === 0) return null;
 
   return (
     <>
       {cars.map((car) => {
         const d = distances.get(car.id) ?? null;
+        if (!car.location) return null;
+
         return (
           <Marker
             key={car.id}
