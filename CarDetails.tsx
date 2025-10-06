@@ -31,11 +31,37 @@ const CarDetailsScreen: React.FC = () => {
     }, [storageKey]);
 
     const confirmRent = async () => {
+        try {
       const next = !isRented;
       setRented(next);
       await AsyncStorage.setItem(storageKey, String(next));
+
+      if (next) {
+          await AsyncStorage.multiSet([
+            ["currentRental", String(carId)],
+            ["currentRentalName", car?.name ?? ""],
+          ]);
+
+            // log for testing
+            const savedId = await AsyncStorage.getItem("currentRental");
+            const savedName = await AsyncStorage.getItem("currentRentalName");
+            console.log("Saved currentRental:", savedId, savedName);
+
+        } else {
+          const current = await AsyncStorage.getItem("currentRental");
+          if (current === String(carId)) {
+            await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
+
+            // log for testing
+            console.log("Cleared currentRental");
+          }
+        }
+
       setPopUpVisible(false);
-    };
+    } catch (e: any) {
+          console.error("confirmRent save failed:", e);
+    }
+}
 
 
 
