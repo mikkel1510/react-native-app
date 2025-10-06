@@ -3,7 +3,6 @@ export type LatLng = { latitude: number; longitude: number };
 
 const toRad = (d: number) => (d * Math.PI) / 180;
 
-/** Haversine distance between two coordinates (in kilometers) */
 export function distanceKm(a: LatLng, b: LatLng): number {
   const R = 6371; // km
   const dLat = toRad(b.latitude - a.latitude);
@@ -18,7 +17,6 @@ export function distanceKm(a: LatLng, b: LatLng): number {
   return R * c;
 }
 
-/** Formats distance (handles null values gracefully) */
 export function formatKm(km: number | null | undefined, digits = 2): string {
   if (km == null) return "Distance unknown";
   return `${km.toFixed(digits)} km away`;
