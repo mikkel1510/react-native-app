@@ -7,7 +7,7 @@
       "model": "Model 3",
       "price": 25,
       "distance": 0.5,
-      "image": "./assets/cars/tesla.png",
+      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/tesla.png",
       "specs": {
         "modelYear": 2024,
         "firstRegistration": "1/2024",
@@ -36,7 +36,7 @@
       "model": "3 Series",
       "price": 22,
       "distance": 0.8,
-      "image": "./assets/cars/bmw.png",
+      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/bmw.png",
       "specs": {
         "modelYear": 2022,
         "firstRegistration": "1/2022",
@@ -65,7 +65,7 @@
       "model": "Corolla",
       "price": 15,
       "distance": 1.5,
-      "image": "./assets/cars/toyota.png",
+      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/toyota.png",
       "specs": {
         "modelYear": 2024,
         "firstRegistration": "1/2024",
@@ -85,6 +85,35 @@
         "gears": 1,
         "towingCapacity": "750 kg",
         "color": "Gray metallic"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Polestar 2",
+      "make": "Polestar",
+      "model": "2",
+      "price": 27,
+      "distance": 0.8,
+      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/tesla.png",
+      "specs": {
+        "modelYear": 2024,
+        "firstRegistration": "3/2024",
+        "mileage": "",
+        "fuelType": "Electric",
+        "fuelConsumption": "",
+        "range": "540 km",
+        "batteryCapacity": "78 kWh",
+        "energyConsumption": "16.5 kWh/100 km",
+        "co2Emissions": "0 g/km",
+        "euroStandard": "",
+        "annualRoadTax": "",
+        "powerOutput": "300 hp",
+        "acceleration": "4.7 sec",
+        "topSpeed": "210 km/h",
+        "transmission": "Single-speed (fixed)",
+        "gears": 1,
+        "towingCapacity": "1,500 kg",
+        "color": "Midnight Blue"
       }
     }
   ]
