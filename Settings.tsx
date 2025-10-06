@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
         letterSpacing: 1,
         fontWeight: 'bold',
         },
-
     });
 
 export default SettingsScreen;
