@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native"
+
+import { View, Text, StyleSheet, Image } from "react-native"
 import { Colors, Border, Spacing, Font, Fonts } from "./constants";
 import { Car } from "./cars"
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
 import { useRental } from "./RentalContext";
+import ButtonComponent from "./components/ButtonComponent";
 
 
 interface CardProps {
@@ -24,12 +26,9 @@ const Card = ({ car }: CardProps) => {
                 <Text style={styles.header}>{car.name}</Text>
                 <Text style={styles.description}>{car.distance} miles away</Text>
                 <Text style={styles.description}>Per hour: ${car.price}</Text>
-
                 {rentedCar == car.id ? <Text>RENTED</Text> : null}
 
-                <Pressable style={styles.button} onPress={() => navigation.navigate("CarDetails" , { carId: car.id })}>
-                    <Text style={styles.buttonText}>See more</Text>
-                </Pressable>
+                <ButtonComponent onPress={() => navigation.navigate("CarDetails", { carId: car.id })} label="See more"/>
             </View>
         </View>
     )

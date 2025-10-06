@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { Border, Colors, Font, Spacing } from "./constants";
@@ -7,6 +7,7 @@ import Modal from "react-native-modal";
 import RentalPopup from "./RentalPopup";
 import { useRental } from "./RentalContext";
 import { CarSpecs, labels } from "./cars";
+import ButtonComponent from "./components/ButtonComponent";
 
 const CarDetailsScreen: React.FC = () => {
   const route = useRoute();
@@ -103,6 +104,7 @@ const CarDetailsScreen: React.FC = () => {
 
   if (loading) {
     return (
+
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color={Colors.accent} />
         <Text>Loading car details...</Text>
@@ -117,7 +119,6 @@ const CarDetailsScreen: React.FC = () => {
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -127,50 +128,46 @@ const CarDetailsScreen: React.FC = () => {
           source={{ uri: car.image }}
         />
 
-        {!isRented ? (
-          <View>
-            {rentedCar ? (
-              <Pressable
-                style={[styles.button, { backgroundColor: Colors.secondary }]}
-                disabled={true}
-              >
-                <Text style={styles.buttonText}>Already rented a car</Text>
-              </Pressable>
-            ) : (
-              <Pressable
-                style={[styles.button, { backgroundColor: Colors.confirm }]}
-                onPress={togglePopUp}
-              >
-                <Text style={styles.buttonText}>Rent</Text>
-                <Image
-                  source={require("./assets/CalendarIcon.png")}
-                  style={{ width: 35, height: 35 }}
-                />
-              </Pressable>
-            )}
-          </View>
-        ) : (
-          <View style={{ gap: Spacing.medium }}>
-            <View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", gap: Spacing.medium }}>
-                <Text style={{ fontWeight: "bold" }}>Rented from:</Text>
-                <Text>{startTime.toLocaleString()}</Text>
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", gap: Spacing.medium }}>
-                <Text style={{ fontWeight: "bold" }}>Until:</Text>
-                <Text>{endTime.toLocaleString()}</Text>
-              </View>
-            </View>
-            <Pressable style={styles.button} onPress={togglePopUp}>
-              <Text style={styles.buttonText}>End rental</Text>
-              <Image
-                source={require("./assets/CalendarIcon.png")}
-                style={{ width: 35, height: 35 }}
-              />
-            </Pressable>
-          </View>
-        )}
+    {!isRented ? (
+  <View>
+    {rentedCar ? (
+      <ButtonComponent
+        label="Already rented a car"
+        backgroundColor={Colors.secondary}
+        textColor="#fff"
+        disabled={true}
+      />
+    ) : (
+      <ButtonComponent
+        label="Rent"
+        icon={require("./assets/CalendarIcon.png")}
+        backgroundColor={Colors.confirm}
+        onPress={togglePopUp}
+      />
+    )}
+  </View>
+) : (
+  <View style={{ gap: Spacing.medium }}>
+    <View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", gap: Spacing.medium }}>
+        <Text style={{ fontWeight: "bold" }}>Rented from:</Text>
+        <Text>{startTime.toLocaleString()}</Text>
       </View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", gap: Spacing.medium }}>
+        <Text style={{ fontWeight: "bold" }}>Until:</Text>
+        <Text>{endTime.toLocaleString()}</Text>
+      </View>
+    </View>
+
+    <ButtonComponent
+      label="End rental"
+      icon={require("./assets/CalendarIcon.png")}
+      backgroundColor={Colors.accent}
+      onPress={togglePopUp}
+    />
+  </View>
+)}
+
 
       <View style={[styles.box, { alignItems: "stretch" }]}>
         {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
@@ -180,6 +177,7 @@ const CarDetailsScreen: React.FC = () => {
           </View>
         ))}
       </View>
+
 
       <Modal isVisible={isPopUpVisible} backdropColor="grey">
         <RentalPopup

@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import {Colors, Fonts, Spacing} from './constants';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,6 +7,7 @@ import SettingsScreen from './Settings'
 import CarListScreen from './CarList'
 import CarDetailsScreen from './CarDetails'
 import MapScreen from './Map';
+import ButtonComponent from './components/ButtonComponent';
 import RecentRentalsScreen from "./RecentRentals";
 import { RentalProvider } from './RentalContext';
 
@@ -27,9 +28,7 @@ export default function App() {
             options={({ navigation }) => ({
               title: 'Cars',
               headerRight: () => (
-                <Pressable onPress={() => navigation.navigate("Map")} style={styles.button}>
-                  <Image style={styles.icon} source={require('./assets/Map.png')}></Image>
-                </Pressable>
+                  <ButtonComponent onPress={() => navigation.navigate("Map")} icon={require("./assets/Map.png")} backgroundColor='transparent'/>
               )
               })}
           />

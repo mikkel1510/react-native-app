@@ -6,12 +6,12 @@ import {
   ScrollView,
   View,
   Text,
-  Pressable,
   StyleSheet,
   ImageBackground,
   Platform,
 } from "react-native";
 import { Colors, Spacing, Border, Font } from "./constants";
+import ButtonComponent from "./components/ButtonComponent";
 
 const heroImg =
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
@@ -27,9 +27,9 @@ const HomeScreen: React.FC = () => {
         {/* Top bar: logo + settings */}
         <View style={styles.topRow}>
           <Text style={styles.logo}>ABOVE</Text>
-          <Pressable onPress={() => navigation.navigate("Settings" as never)}>
-            <Text style={styles.gear}>⚙️</Text>
-          </Pressable>
+          
+          <ButtonComponent onPress={() => navigation.navigate("Settings" as never)} icon={require("./assets/gear.png")} backgroundColor='transparent'/>
+
         </View>
 
         {/* HERO with background image */}
@@ -41,36 +41,25 @@ const HomeScreen: React.FC = () => {
           <View style={styles.heroOverlay} />
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>Rent a Car</Text>
-            <Text style={styles.heroSub}>Browse, compare, reserve</Text>
-            <Pressable style={[styles.btn, styles.btnAccent]} onPress={() => navigation.navigate("Cars" as never)} >
-              <Text style={[styles.btnText, styles.btnAccentText]}> Explore Cars </Text>
-            </Pressable>
+            <Text style={styles.heroSub}>Browse, compare, reserve</Text>             
+
+            <ButtonComponent labelStyle={styles.btnAccentText} onPress={() => navigation.navigate("Cars" as never)} label="Explore Cars"/>
           </View>
         </ImageBackground>
 
         {/* Quick actions */}
         <View style={styles.row}>
-          {/* Recent rentals — placeholder */}
-          <Pressable
-            style={[styles.tile, styles.tilePrimary]}
-            onPress={() => {
-              navigation.navigate("RecentRentals" as never);
-            }}
-          >
-            <Text style={styles.tileTitle}>Recent rentals</Text>
-            <Text style={styles.tileText}>See your last bookings</Text>
-          </Pressable>
+          {/* Recent rentals */}
+          
+          <ButtonComponent style={[styles.tile, styles.tilePrimary]} onPress={() => console.log("Recent Rentals screen not yet implemented")} label="Recent Rentals" labelStyle={styles.tileTitle}
+            extraText={"See your last bookings"} extraTextStyle={styles.tileText} />
 
-          {/* Support — placeholder, red color */}
-          <Pressable
-            style={[styles.tile, styles.tileSupport]}
-            onPress={() => {
-              console.log("Support screen not yet implemented");
-            }}
-          >
-            <Text style={styles.tileTitle}>Support</Text>
-            <Text style={styles.tileText}>We’re here to help</Text>
-          </Pressable>
+
+          {/* Support — red color */}
+          
+          <ButtonComponent style={[styles.tile, styles.tileSupport]} onPress={() => console.log("Support screen not yet implemented")} label="Support" labelStyle={styles.tileTitle}
+            extraText={"We're here to help!"} extraTextStyle={styles.tileText} />
+          
         </View>
 
         {/* Info card */}
