@@ -1,42 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Region } from 'react-native-maps';
 import * as Location from 'expo-location';
+import CarPin from "./CarPins";
+import { LatLng } from "./Math";
+import { cars } from "./cars";
+
+const ODENSE_FALLBACK: Region = {
+  latitude: 55.3959,
+  longitude: 10.3883,
+  latitudeDelta: 0.05,
+  longitudeDelta: 0.05,
+};
 
 const MapScreen: React.FC = () => {
-  const [region, setRegion] = useState<any>(null);
+  const [userLoc, setUserLoc] = useState<LatLng | null>(null);
+  const [region, setRegion] = useState<Region | null>(null);
+  const [loading, setLoading] = useState(true);
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     (async () => {
-      // Beder brugen om tilladelse
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-
-
-        // Hvis brugern siger nej så vender vi tilbage til København som default 
+      if (status === 'granted') {
+        const location = await Location.getCurrentPositionAsync({});
+        const coords = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+        setUserLoc(coords);
         setRegion({
-          latitude: 55.6761,
-          longitude: 12.5683,
+          ...coords,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         });
-        return;
+      } else {
+        setUserLoc(null);
+        setRegion({
+          latitude: 55.3959,
+          longitude: 10.3883,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        });
       }
-
-      // Hent brugerens position
-      const location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      });
+      setLoading(false);
     })();
   }, []);
 
-  if (!region) {
-    // bare en loader mens vi venter på positionen
+  if (loading || !region) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" />
@@ -46,8 +54,13 @@ const MapScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} region={region} showsUserLocation>
-        
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        region={region}
+        showsUserLocation={!!userLoc}
+      >
+        <CarPin userLoc={userLoc} />
       </MapView>
     </View>
   );
