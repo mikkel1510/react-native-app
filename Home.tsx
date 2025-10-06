@@ -95,7 +95,7 @@ const HomeScreen: React.FC = () => {
           <Pressable
             style={[styles.tile, styles.tilePrimary]}
             onPress={() => {
-              console.log("Recent Rentals screen not yet implemented");
+              navigation.navigate("RecentRentals" as never);
             }}
           >
             <Text style={styles.tileTitle}>Recent rentals</Text>

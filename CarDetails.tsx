@@ -1,26 +1,41 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { cars, CarSpecs, labels } from "./cars";
-import { Border, Colors, Spacing } from "./constants";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { Border, Colors, Font, Spacing } from "./constants";
+
 import Modal from "react-native-modal";
+import RentalPopup from "./RentalPopup";
+import { useRental } from "./RentalContext";
+
 
 
 const CarDetailsScreen: React.FC = () => {
+
+    const route = useRoute();
+    const { carId } = route.params as {carId: number}
+    const car = cars.find((c) => c.id === carId);
+
+    if (!car){
+        return (
+            <Text>Car not found!</Text>
+        )
+    }
 
     const [isPopUpVisible, setPopUpVisible] = useState(false)
     const togglePopUp = () => {
         setPopUpVisible(!isPopUpVisible);
     }
 
-    const [isRented, setRented] = useState(false);
+    const [startTime, setStartTime] = useState(new Date())
+    const [endTime, setEndTime] = useState(new Date())
 
-    const route = useRoute();
-    const { carId } = route.params as { carId: number };
-    const car = cars.find((c) => c.id === carId);
-
-    const storageKey = `rented:${carId}`;
+    const { rentedCar, setRentedCar } = useRental();
+    const [isRented, setRented] = useState(rentedCar == car.id)
+      
+      const storageKey = `rented:${carId}`;
 
     useEffect(() => {
       const getStored = async () => {
@@ -61,19 +76,30 @@ const CarDetailsScreen: React.FC = () => {
     } catch (e: any) {
           console.error("confirmRent save failed:", e);
     }
-}
 
-
-
+    const rent = (startDate: Date, timePeriod: string) => {
+        setStartTime(startDate)
+        switch (timePeriod) {
+            case "1":
+                setEndTime(new Date(startDate.getTime() + 1 * 60 * 60 * 1000));
+                break;
+            case "6":
+                setEndTime(new Date(startDate.getTime() + 6 * 60 * 60 * 1000));
+                break; 
+            case "24":
+                setEndTime(new Date(startDate.getTime() + 24 * 60 * 60 * 1000));
+                break;
+        }
+        toggleRented();
+        setRentedCar(car.id)
+    }
+    
     const toggleRented = () => {
+        if (rentedCar != null){
+            setRentedCar(null)
+        }
         setRented(!isRented);
         setPopUpVisible(!isPopUpVisible)
-    }
-
-    if (!car){
-        return (
-            <Text>Car not found!</Text>
-        )
     }
 
     return (
@@ -92,10 +118,10 @@ const CarDetailsScreen: React.FC = () => {
             <View style={[styles.box, { alignItems: 'stretch' }]}>
                 {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
                     <View style={styles.infoRow} key={key}>
-                        <Text>
+                        <Text style={{ fontFamily: Font.font }}>
                             {labels[key]}:
                         </Text>
-                        <Text>
+                        <Text style={{ fontFamily: Font.font }}>
                             {car.specs[key]}
                         </Text>
                     </View>
@@ -156,11 +182,13 @@ const styles = StyleSheet.create({
         resizeMode: "contain"
     },
     header: {
-        fontSize: 30
+        fontSize: 30,
+        fontFamily: Font.font
     },
     buttonText: {
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: Font.font
     },
     button: {
         backgroundColor: Colors.accent,
