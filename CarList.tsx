@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 
-const apiURL = "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/data.json";
+const apiURL = "https://raw.githubusercontent.com/mikkel1510/react-native-app/refs/heads/main/data.json";
 
 
 const CarListScreen: React.FC = () => {

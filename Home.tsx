@@ -1,5 +1,5 @@
 // Home.tsx
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
@@ -10,10 +10,8 @@ import {
   StyleSheet,
   ImageBackground,
   Platform,
-  Alert,
 } from "react-native";
 import { Colors, Spacing, Border, Font } from "./constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const heroImg =
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"; // car photo
