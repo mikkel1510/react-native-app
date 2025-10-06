@@ -31,7 +31,7 @@
       "location": { 
         "latitude": 55.3686, 
         "longitude": 10.4275 
-      },
+      }
     },
     {
       "id": 2,
@@ -64,7 +64,7 @@
       "location": { 
         "latitude": 55.3959, 
         "longitude": 10.3883 
-      },
+      }
     },
     {
       "id": 3,
@@ -97,7 +97,7 @@
       "location": { 
         "latitude": 55.4035, 
         "longitude": 10.3830 
-      },
+      }
     },
     {
       "id": 4,
