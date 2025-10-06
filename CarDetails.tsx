@@ -62,12 +62,11 @@ const CarDetailsScreen: React.FC = () => {
           ["currentRental", String(carId)],
           ["currentRentalName", car?.name ?? ""],
         ]);
-        console.log("Saved currentRental:", carId, car?.name);
+        
       } else {
         const current = await AsyncStorage.getItem("currentRental");
         if (current === String(carId)) {
           await AsyncStorage.multiRemove(["currentRental", "currentRentalName"]);
-          console.log("Cleared currentRental");
         }
       }
       setPopUpVisible(false);
