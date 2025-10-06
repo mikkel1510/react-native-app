@@ -7,6 +7,9 @@ import SettingsScreen from './Settings'
 import CarListScreen from './CarList'
 import CarDetailsScreen from './CarDetails'
 import MapScreen from './Map';
+import RecentRentalsScreen from "./RecentRentals";
+
+
 
 const Stack = createStackNavigator()
 
@@ -17,6 +20,8 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen}/>
         <Stack.Screen name="Settings" component={SettingsScreen}/>
+        <Stack.Screen name="RecentRentals" component={RecentRentalsScreen}/>
+
         <Stack.Screen 
           name="Cars" 
           component={CarListScreen} 
