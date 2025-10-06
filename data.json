@@ -28,7 +28,10 @@
         "towingCapacity": "1,000 kg",
         "color": "White"
       },
-      location: { latitude: 55.3686, longitude: 10.4275 },
+      "location": { 
+        "latitude": 55.3686, 
+        "longitude": 10.4275 
+      },
     },
     {
       "id": 2,
@@ -58,7 +61,10 @@
         "towingCapacity": "1,500 kg",
         "color": "Black"
       },
-      location: { latitude: 55.3959, longitude: 10.3883 },
+      "location": { 
+        "latitude": 55.3959, 
+        "longitude": 10.3883 
+      },
     },
     {
       "id": 3,
@@ -88,7 +94,10 @@
         "towingCapacity": "750 kg",
         "color": "Gray metallic"
       }, 
-      location: { latitude: 55.4035, longitude: 10.3830 },
+      "location": { 
+        "latitude": 55.4035, 
+        "longitude": 10.3830 
+      },
     },
     {
       "id": 4,
@@ -118,7 +127,10 @@
         "towingCapacity": "1,500 kg",
         "color": "Midnight Blue"
       },
-      "location": { "latitude": 55.4036, "longitude": 10.3850 }
+      "location": { 
+        "latitude": 55.4036, 
+        "longitude": 10.3850 
+      }
     }
   ]
 }
