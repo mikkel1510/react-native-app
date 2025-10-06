@@ -106,7 +106,7 @@
       "model": "2",
       "price": 27,
       "distance": 0.8,
-      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/tesla.png",
+      "image": "https://raw.githubusercontent.com/mikkel1510/react-native-app/main/assets/cars/polestar.png",
       "specs": {
         "modelYear": 2024,
         "firstRegistration": "3/2024",
