@@ -35,6 +35,12 @@ const ButtonComponent: React.FC<ButtonProps> = ({
         style={[styles.button, {backgroundColor}, style]}
         onPress={!disabled ? onPress : undefined}
         >
+            {icon && (
+                    <Image
+                    source = {icon}
+                    style = {styles.icon}
+                    />
+                )}
             <View style={styles.textContainer}>
                 <Text style={[styles.label, { color: textColor }, labelStyle]}>{label}</Text>
                 
@@ -47,12 +53,6 @@ const ButtonComponent: React.FC<ButtonProps> = ({
                     </Text>
                 ))}
             </View>
-                {icon && (
-                    <Image
-                    source = {icon}
-                    style = {styles.icon}
-                    />
-                )}
         </Pressable>
     )
 }

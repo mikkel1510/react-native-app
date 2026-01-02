@@ -164,6 +164,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.small,
+    marginRight: -Spacing.large,
+
   },
   logo: {
     color: Colors.text,
@@ -224,13 +226,13 @@ const styles = StyleSheet.create({
   tilePrimary: { backgroundColor: Colors.primary },
   tileSupport: { backgroundColor: Colors.accent },
   tileTitle: {
-    color: Colors.text,
+    color: "#fff",
     fontSize: Font.medium,
     fontWeight: "700",
     fontFamily: Font.font,
   },
   tileText: {
-    color: Colors.text,
+    color: "#fff",
     opacity: 0.85,
     fontSize: Font.small,
     fontFamily: Font.font,
