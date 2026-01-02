@@ -19,6 +19,7 @@ const CarDetailsScreen: React.FC = () => {
   const [isRented, setRented] = useState(false);
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
 
   const { rentedCar, setRentedCar } = useRental();
   const storageKey = `rented:${carId}`;
@@ -59,6 +60,8 @@ const CarDetailsScreen: React.FC = () => {
   }, [carId]);
 
   const togglePopUp = () => setPopUpVisible(!isPopUpVisible);
+
+  const toggleShowAllSpecs = () => setShowAllSpecs((s) => !s);
 
   const confirmRent = async () => {
     try {
@@ -143,7 +146,8 @@ const CarDetailsScreen: React.FC = () => {
         <Text>Car not found!</Text>
       </View>
     );
-  }
+  }  const specKeys = Object.keys(car.specs) as (keyof CarSpecs)[];
+  const visibleSpecKeys = showAllSpecs ? specKeys : specKeys.slice(0, 5);
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -196,12 +200,22 @@ const CarDetailsScreen: React.FC = () => {
 
 
       <View style={[styles.box, { alignItems: "stretch" }]}>
-        {(Object.keys(car.specs) as (keyof CarSpecs)[]).map((key) => (
+        {visibleSpecKeys.map((key) => (
           <View style={styles.infoRow} key={key}>
             <Text style={{ fontFamily: Font.font }}>{labels[key]}:</Text>
             <Text style={{ fontFamily: Font.font }}>{car.specs[key]}</Text>
           </View>
         ))}
+        {specKeys.length > 5 && (
+          <View style={{ marginTop: Spacing.medium }}>
+            <ButtonComponent
+              label={showAllSpecs ? "Show less" : `Show more (${specKeys.length - 5})`}
+              backgroundColor={Colors.secondary}
+              textColor="#fff"
+              onPress={toggleShowAllSpecs}
+            />
+          </View>
+        )}
       </View>
 
 
