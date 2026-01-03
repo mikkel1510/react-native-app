@@ -92,7 +92,7 @@
         "powerOutput": "140 hp",
         "acceleration": "9.4 sec",
         "gears": 1,
-        "towingCapacity": "750 kg",
+        "towingCapacity": "750 kg"
       }, 
       "location": { 
         "latitude": 55.4035, 
