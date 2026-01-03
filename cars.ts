@@ -16,38 +16,38 @@ export interface CarSpecs {
   transmission: string;
   fuelType: string;
   topSpeed: string;
-  mileage: string;
-  gears: number;
-  acceleration: string;
   firstRegistration: string;
-  batteryCapacity: string;
+  mileage: string;
   fuelConsumption: string;
   range: string;
+  batteryCapacity: string;
   energyConsumption: string;
   co2Emissions: string;
   euroStandard: string;
   annualRoadTax: string;
   powerOutput: string;
+  acceleration: string;
+  gears: number;
   towingCapacity: string;
 }
 
 export const labels: Record<keyof CarSpecs, string> = {
   modelYear: "Model year",
   color: "Color",
+  transmission: "Transmission",
   fuelType: "Fuel type",
   topSpeed: "Top speed",
-  batteryCapacity: "Battery capacity",
-  fuelConsumption: "Fuel consumption",
-  mileage: "Mileage",
-  range: "Range",
   firstRegistration: "First registration",
+  mileage: "Mileage",
+  fuelConsumption: "Fuel consumption",
+  range: "Range",
+  batteryCapacity: "Battery capacity",
   energyConsumption: "Energy consumption",
   co2Emissions: "CO₂ emissions",
   euroStandard: "Euro standard",
   annualRoadTax: "Annual road tax",
   powerOutput: "Power output",
   acceleration: "Acceleration",
-  transmission: "Transmission",
   gears: "Number of gears",
   towingCapacity: "Towing capacity",
 };
